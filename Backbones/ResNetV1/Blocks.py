@@ -126,23 +126,23 @@ def without_pointwise_IB(x : MakiTensor, block_id: int, unit_id: int, num_block:
     if in_f is None:
         in_f = x.get_shape()[-1]
 
-    mx = BatchNormLayer(D=in_f, name=prefix + 'bn1')(x)
+    mx = BatchNormLayer(D=in_f, name=prefix_name + 'bn1')(x)
                                         
-    mx = ActivationLayer(activation=activation, name=prefix + 'activation_1')(mx)
+    mx = ActivationLayer(activation=activation, name=prefix_name + 'activation_1')(mx)
 
-    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix + 'zero_pad_1')(mx)
+    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix_name + 'zero_pad_1')(mx)
 
     mx = ConvLayer(kw=3, kh=3, in_f=in_f, out_f=in_f, activation=None,
-                                padding='VALID', use_bias=use_bias, name=prefix + 'conv1')(mx)
+                                padding='VALID', use_bias=use_bias, name=prefix_name + 'conv1')(mx)
                                                                                     
-    mx = BatchNormLayer(D=in_f, name=prefix + 'bn2')(mx)
+    mx = BatchNormLayer(D=in_f, name=prefix_name + 'bn2')(mx)
 
-    mx = ActivationLayer(activation=activation, name=prefix + 'activation_2')(mx)
+    mx = ActivationLayer(activation=activation, name=prefix_name + 'activation_2')(mx)
 
-    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix + 'zero_pad_2')(mx)
+    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix_name + 'zero_pad_2')(mx)
 
     mx = ConvLayer(kw=3, kh=3, in_f=in_f, out_f=in_f, activation=None,
-                                padding='VALID', use_bias=use_bias, name=prefix + 'conv2')(mx)                        
+                                padding='VALID', use_bias=use_bias, name=prefix_name + 'conv2')(mx)                        
 
     x = SumLayer(name='add' + str(num_block))([mx,x])
 
@@ -169,7 +169,7 @@ def without_pointwise_CB(x : MakiTensor, block_id: int, unit_id: int, num_block:
             out_f : int
                 Output number of feature maps
     """
-    prefix = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
+    prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
 
     if in_f is None:
         in_f = x.get_shape()[-1]
@@ -179,24 +179,24 @@ def without_pointwise_CB(x : MakiTensor, block_id: int, unit_id: int, num_block:
     else:
         out_f = out_f
 
-    x = BatchNormLayer(D=in_f, name=prefix + 'bn1')(x)
-    x = ActivationLayer(activation=activation, name=prefix + 'activation_1')(x)
+    x = BatchNormLayer(D=in_f, name=prefix_name + 'bn1')(x)
+    x = ActivationLayer(activation=activation, name=prefix_name + 'activation_1')(x)
 
-    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix + 'zero_pad_1')(x)
+    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix_name + 'zero_pad_1')(x)
 
     mx = ConvLayer(kw=3, kh=3, in_f=in_f, out_f=out_f, activation=None, stride=stride,
-                                    padding='VALID', use_bias=use_bias, name=prefix + 'conv1')(mx)
+                                    padding='VALID', use_bias=use_bias, name=prefix_name + 'conv1')(mx)
                                                                                 
-    mx = BatchNormLayer(D=out_f, name=prefix + 'bn2')(mx)
-    mx = ActivationLayer(activation=activation, name=prefix + 'activation_2')(mx)
+    mx = BatchNormLayer(D=out_f, name=prefix_name + 'bn2')(mx)
+    mx = ActivationLayer(activation=activation, name=prefix_name + 'activation_2')(mx)
 
-    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix + 'zero_pad_2')(mx)
+    mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix_name + 'zero_pad_2')(mx)
     mx = ConvLayer(kw=3, kh=3, in_f=out_f, out_f=out_f, activation=None,
-                                    padding='VALID', use_bias=use_bias, name=prefix + 'conv2')(mx)
+                                    padding='VALID', use_bias=use_bias, name=prefix_name + 'conv2')(mx)
                                                                                 
 
     sx = ConvLayer(kw=1, kh=1, in_f=in_f, out_f=out_f, stride=stride,
-                                    padding='VALID', activation=None, use_bias=use_bias, name=prefix + 'sc/conv')(x)
+                                    padding='VALID', activation=None, use_bias=use_bias, name=prefix_name + 'sc/conv')(x)
                                                                                
     x = SumLayer(name='add' + str(num_block))([mx,sx])
 
