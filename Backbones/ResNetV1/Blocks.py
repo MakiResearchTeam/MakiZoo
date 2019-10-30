@@ -135,7 +135,7 @@ def without_pointwise_IB(x : MakiTensor, block_id: int, unit_id: int, num_block:
                                 padding='VALID', use_bias=use_bias, name=prefix + 'conv1')(mx)
                                                                                     
     mx = BatchNormLayer(D=in_f, name=prefix + 'bn2')(mx)
-    
+
     mx = ActivationLayer(activation=activation, name=prefix + 'activation_2')(mx)
 
     mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=prefix + 'zero_pad_2')(mx)
