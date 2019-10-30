@@ -35,7 +35,7 @@ def build_resnet(
     else:
         raise Exception(f'{block_type} type is not found')
 
-	in_x = InputLayer(input_shape=input_shape,name='Input')
+    in_x = InputLayer(input_shape=input_shape,name='Input')
 
     if factorization_first_layer:
         x = ConvLayer(kw=3, kh=3, in_f=3, out_f=feature_maps, use_bias=use_bias,
@@ -58,13 +58,13 @@ def build_resnet(
 
         feature_maps = output_factorization_layer
     else:
-	    x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
+        x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
                                     stride=2, activation=None,name='conv1/weights')(in_x)
         
         x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm')(x)
         x = ActivationLayer(activation=activation, name='activation')(x)
 
-	x = MaxPoolLayer(ksize=[1,3,3,1], name='max_pooling2d')(x)
+    x = MaxPoolLayer(ksize=[1,3,3,1], name='max_pooling2d')(x)
 
     # Build body of ResNet
     num_activation = 3
@@ -114,12 +114,12 @@ def build_resnet(
         x = ActivationLayer(activation=activation, name='relu1')(x)
 
     if include_top:
-		x = GlobalAvgPoolLayer(name='avg_pool')(x)
-		output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits')(x)
-	else:
-		output = x
+        x = GlobalAvgPoolLayer(name='avg_pool')(x)
+        output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits')(x)
+    else:
+        output = x
 
     if create_model:
         return Classificator(in_x,output,name=name_model)
     else:
-	    return in_x, output
+        return in_x, output
