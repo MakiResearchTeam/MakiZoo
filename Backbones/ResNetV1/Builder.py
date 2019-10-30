@@ -69,7 +69,7 @@ def build_resnet(
 
     # Build body of ResNet
     num_activation = 3
-
+    num_block = 0
     for stage, repeat in enumerate(repetition):
         for block in range(repeat):
 
@@ -79,7 +79,7 @@ def build_resnet(
                     x=x, 
                     block_id=stage, 
                     unit_id=block, 
-                    num_block=( stage + 1) * block,
+                    num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
                     stride=1
@@ -90,7 +90,7 @@ def build_resnet(
                     x=x, 
                     block_id=stage, 
                     unit_id=block, 
-                    num_block=( stage + 1) * block,
+                    num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
                     stride=2
@@ -101,11 +101,11 @@ def build_resnet(
                     x=x,
                     block_id=stage,
                     unit_id=block,
-                    num_block=( stage + 1) * block,
+                    num_block=num_block,
                     use_bias=use_bias,
                     activation=activation
                 )[0]
-            
+            num_block += 1
             if pointwise:
                 x = ActivationLayer(activation=activation, name='activation_' + str(num_activation))(x)
                 num_activation += 3
