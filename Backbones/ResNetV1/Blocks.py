@@ -121,7 +121,7 @@ def without_pointwise_IB(x : MakiTensor, block_id: int, unit_id: int, num_block:
                 Output number of feature maps
     """
 
-    prefix_name = 'stage' + str(stage_id) + '_unit' + str(unit_id) + '_'
+    prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
 
     if in_f is None:
         in_f = x.get_shape()[-1]
@@ -169,7 +169,7 @@ def without_pointwise_CB(x : MakiTensor, block_id: int, unit_id: int, num_block:
             out_f : int
                 Output number of feature maps
     """
-    prefix = 'stage' + str(stage_id) + '_unit' + str(unit_id) + '_'
+    prefix = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
 
     if in_f is None:
         in_f = x.get_shape()[-1]
