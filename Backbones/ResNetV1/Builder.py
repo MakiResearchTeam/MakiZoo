@@ -83,7 +83,7 @@ def build_resnet(
                     use_bias=use_bias,
                     activation=activation,
                     stride=1
-                )
+                )[0]
             # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
             elif block == 0:
                 x = conv_block(
@@ -94,7 +94,7 @@ def build_resnet(
                     use_bias=use_bias,
                     activation=activation,
                     stride=2
-                )
+                )[0]
 
             else:
                 x = iden_block(
@@ -104,7 +104,7 @@ def build_resnet(
                     num_block=( stage + 1) * block,
                     use_bias=use_bias,
                     activation=activation
-                )
+                )[0]
             
             if pointwise:
                 x = ActivationLayer(activation=activation, name='activation_' + str(num_activation))(x)
