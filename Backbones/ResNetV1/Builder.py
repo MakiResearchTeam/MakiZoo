@@ -1,8 +1,8 @@
-from Blocks import identity_block as with_pointwise_IB
-from Blocks import conv_block as with_pointwise_CB
+from .Blocks import identity_block as with_pointwise_IB
+from .Blocks import conv_block as with_pointwise_CB
 
-from Blocks import without_pointwise_IB
-from Blocks import without_pointwise_CB
+from .Blocks import without_pointwise_IB
+from .Blocks import without_pointwise_CB
 
 from makiflow.layers import *
 from makiflow.models import Classificator

@@ -1,4 +1,4 @@
-from Builder import build_resnet
+from .Builder import build_resnet
 
 
 
