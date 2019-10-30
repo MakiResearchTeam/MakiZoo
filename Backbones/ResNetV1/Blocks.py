@@ -1,5 +1,6 @@
 from makiflow.layers import *
 from makiflow.base import MakiTensor
+import tensorflow as tf
 
 def identity_block(x : MakiTensor, block_id: int, unit_id: int, num_block: int, in_f=None, use_bias=False,activation=tf.nn.relu):
     """

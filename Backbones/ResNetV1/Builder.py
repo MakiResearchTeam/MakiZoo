@@ -6,6 +6,7 @@ from .Blocks import without_pointwise_CB
 
 from makiflow.layers import *
 from makiflow.models import Classificator
+import tensorflow as tf
 
 
 def build_resnet(

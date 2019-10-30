@@ -1,5 +1,5 @@
 from .Builder import build_resnet
-
+import tensorflow as tf
 
 
 def ResNet18(input_shape, classes=1000, include_top=False):
