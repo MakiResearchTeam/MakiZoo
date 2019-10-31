@@ -46,7 +46,7 @@ def build_ResNetV1(
 
     if factorization_first_layer:
 
-        x = ConvLayer(kw=3, kh=3, in_f=3, out_f=feature_maps, use_bias=use_bias,
+        x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
                                     activation=None, name='conv1_1/weights')(in_x)
 
         x = BatchNormLayer(D=feature_maps, name='conv1_1/BatchNorm', **bm_params)(x)
@@ -171,7 +171,7 @@ def create_LittleResNetV1(
 
     in_x = InputLayer(input_shape=input_shape,name='Input')
 
-    x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, activation=None,
+    x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, activation=None,
                                     use_bias=use_bias, name='conv1')(in_x)
                                                                                 
     x = BatchNormLayer(D=feature_maps, name='bn_1', **bm_params)(x)
