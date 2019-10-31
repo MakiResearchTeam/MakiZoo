@@ -23,7 +23,8 @@ def build_resnetV1(
         create_model=False,
         name_model='MakiClassificator',
         init_filters=64,
-        min_reduction=64):
+        min_reduction=64,
+        activation_between_blocks=True):
 
     feature_maps = init_filters
     bm_params = get_batchnorm_params()
@@ -131,13 +132,100 @@ def build_resnetV1(
                 )[0]
             num_block += 1
 
-            if pointwise:
+            if activation_between_blocks:
                 x = ActivationLayer(activation=activation, name='activation_' + str(num_activation))(x)
                 num_activation += 3
     
     if not pointwise:
         x = BatchNormLayer(D=x.get_shape()[-1], name='bn1', **bm_params)(x)
         x = ActivationLayer(activation=activation, name='relu1')(x)
+
+    if include_top:
+        x = GlobalAvgPoolLayer(name='avg_pool')(x)
+        output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits')(x)
+    else:
+        output = x
+
+    if create_model:
+        return Classificator(in_x,output,name=name_model)
+    else:
+        return in_x, output
+
+
+def create_littleResNetV1(
+        input_shape,
+        depth=20,
+        include_top=False,
+        num_classes=1000,
+        use_bias=False,
+        activation=tf.nn.relu,
+        create_model=False,
+        name_model='MakiClassificator',
+        activation_between_blocks=True):
+        
+    feature_maps = 16
+    bm_params = get_batchnorm_params()
+
+    conv_block = without_pointwise_CB
+    iden_block = without_pointwise_IB
+
+    in_x = InputLayer(input_shape=input_shape,name='Input')
+
+    mx = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, activation=None,
+                                    use_bias=use_bias, name='conv1')(mx)
+                                                                                
+    mx = BatchNormLayer(D=feature_maps, name='bn_1', **bm_params)(mx)
+    mx = ActivationLayer(activation=activation, name= 'activation_1')(mx)
+
+    repeat = int((depth - 2) / 6)
+
+    # Build body of ResNet
+    num_block = 0
+    num_activation = 3
+    
+    for stage in range(3):
+        for block in range(repeat):
+
+            # First block of the first stage is used without strides because we have maxpooling before
+            if block == 0 and stage == 0:
+                x = conv_block(
+                    x=x, 
+                    block_id=stage, 
+                    unit_id=block, 
+                    num_block=num_block,
+                    use_bias=use_bias,
+                    activation=activation,
+                    stride=1,
+                    out_f=feature_maps,
+                    bm_params=bm_params
+                )[0]
+            elif block == 0:
+                # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
+                x = conv_block(
+                    x=x, 
+                    block_id=stage, 
+                    unit_id=block, 
+                    num_block=num_block,
+                    use_bias=use_bias,
+                    activation=activation,
+                    stride=2,
+                    bm_params=bm_params
+                )[0]
+            else:
+                x = iden_block(
+                    x=x,
+                    block_id=stage,
+                    unit_id=block,
+                    num_block=num_block,
+                    use_bias=use_bias,
+                    activation=activation,
+                    bm_params=bm_params
+                )[0]
+
+            if activation_between_blocks:
+                x = ActivationLayer(activation=activation, name='activation_' + str(num_activation))(x)
+                num_activation += 3
+            num_block += 1
 
     if include_top:
         x = GlobalAvgPoolLayer(name='avg_pool')(x)
