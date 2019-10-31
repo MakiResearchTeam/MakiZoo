@@ -83,7 +83,7 @@ def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_l
                 activation=tf.nn.relu,
                 block_type='with_pointwise',
                 create_model=create_model,
-                name_model='ResNet50'
+                name_model='ResNet50',
         )
 
         return model
