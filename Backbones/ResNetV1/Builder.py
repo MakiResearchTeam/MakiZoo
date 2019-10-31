@@ -171,11 +171,11 @@ def create_LittleResNetV1(
 
     in_x = InputLayer(input_shape=input_shape,name='Input')
 
-    mx = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, activation=None,
-                                    use_bias=use_bias, name='conv1')(mx)
+    x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, activation=None,
+                                    use_bias=use_bias, name='conv1')(in_x)
                                                                                 
-    mx = BatchNormLayer(D=feature_maps, name='bn_1', **bm_params)(mx)
-    mx = ActivationLayer(activation=activation, name= 'activation_1')(mx)
+    x = BatchNormLayer(D=feature_maps, name='bn_1', **bm_params)(x)
+    x = ActivationLayer(activation=activation, name= 'activation_1')(x)
 
     repeat = int((depth - 2) / 6)
 
