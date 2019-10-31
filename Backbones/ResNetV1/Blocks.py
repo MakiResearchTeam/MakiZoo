@@ -8,7 +8,7 @@ def identity_block(x : MakiTensor,
                     num_block: int,
                     in_f=None, 
                     use_bias=False,
-                    activation=tf.nn.relu
+                    activation=tf.nn.relu,
                     bm_params={}):
     """
         Parameters
