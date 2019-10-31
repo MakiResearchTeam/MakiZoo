@@ -11,7 +11,7 @@ from makiflow.models import Classificator
 import tensorflow as tf
 
 
-def build_resnetV1(
+def build_ResNetV1(
         input_shape,
         repetition=(2,2,2,2),
         include_top=False,
@@ -152,7 +152,7 @@ def build_resnetV1(
         return in_x, output
 
 
-def create_littleResNetV1(
+def create_LittleResNetV1(
         input_shape,
         depth=20,
         include_top=False,
