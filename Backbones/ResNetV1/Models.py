@@ -1,4 +1,4 @@
-from .Builder import build_resnet
+from .Builder import build_resnetV1
 import tensorflow as tf
 
 
@@ -6,7 +6,7 @@ def ResNet18(input_shape, classes=1000, include_top=False, create_model=True):
 
     if create_model:
 
-        model = build_resnet(
+        model = build_resnetV1(
                 input_shape=input_shape,
                 repetition=(2, 2, 2, 2),
                 include_top=include_top,
@@ -20,7 +20,7 @@ def ResNet18(input_shape, classes=1000, include_top=False, create_model=True):
         )
         return model
     else:
-        x, output = build_resnet(
+        x, output = build_resnetV1(
                     input_shape=input_shape,
                     repetition=(2, 2, 2, 2),
                     include_top=include_top,
@@ -39,7 +39,7 @@ def ResNet18(input_shape, classes=1000, include_top=False, create_model=True):
 def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
 
     if create_model:
-        model = build_resnet(
+        model = build_resnetV1(
                 input_shape=input_shape,
                 repetition=(3, 4, 6, 3),
                 include_top=include_top,
@@ -54,7 +54,7 @@ def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_l
 
         return model
     else:
-        x, output = build_resnet(
+        x, output = build_resnetV1(
                     input_shape=input_shape,
                     repetition=(3, 4, 6, 3),
                     include_top=include_top,
@@ -73,7 +73,7 @@ def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_l
 def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
 
     if create_model:
-        model = build_resnet(
+        model = build_resnetV1(
                 input_shape=input_shape,
                 repetition=(3, 4, 6, 3),
                 include_top=include_top,
@@ -88,7 +88,7 @@ def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_l
 
         return model
     else:
-        x, output = build_resnet(
+        x, output = build_resnetV1(
                     input_shape=input_shape,
                     repetition=(3, 4, 6, 3),
                     include_top=include_top,
@@ -107,7 +107,7 @@ def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_l
 def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
 
     if create_model:
-        model = build_resnet(
+        model = build_resnetV1(
                 input_shape=input_shape,
                 repetition=(3, 4, 23, 3),
                 include_top=include_top,
@@ -122,7 +122,7 @@ def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_
 
         return model
     else:
-        x, output = build_resnet(
+        x, output = build_resnetV1(
                     input_shape=input_shape,
                     repetition=(3, 4, 23, 3),
                     include_top=include_top,
@@ -141,7 +141,7 @@ def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_
 def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
 
     if create_model:
-        model = build_resnet(
+        model = build_resnetV1(
                 input_shape=input_shape,
                 repetition=(3, 8, 36, 3),
                 include_top=include_top,
@@ -156,7 +156,7 @@ def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_
 
         return model
     else:
-        x, output = build_resnet(
+        x, output = build_resnetV1(
                 input_shape=input_shape,
                 repetition=(3, 8, 36, 3),
                 include_top=include_top,
