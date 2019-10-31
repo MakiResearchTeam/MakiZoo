@@ -197,7 +197,7 @@ def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=T
 
     if create_model:
 
-        model = build_resnetV1(
+        model = create_littleResNetV1(
                 input_shape,
                 depth=20,
                 include_top=include_top,
@@ -210,7 +210,7 @@ def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=T
         )
         return model
     else:
-        x, output = build_resnetV1(
+        x, output = create_littleResNetV1(
                     input_shape,
                     depth=20,
                     include_top=include_top,
@@ -229,7 +229,7 @@ def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=T
 
     if create_model:
 
-        model = build_resnetV1(
+        model = create_littleResNetV1(
                 input_shape,
                 depth=32,
                 include_top=include_top,
@@ -242,7 +242,7 @@ def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=T
         )
         return model
     else:
-        x, output = build_resnetV1(
+        x, output = create_littleResNetV1(
                     input_shape,
                     depth=32,
                     include_top=include_top,
@@ -261,7 +261,7 @@ def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=T
 
     if create_model:
 
-        model = build_resnetV1(
+        model = create_littleResNetV1(
                 input_shape,
                 depth=44,
                 include_top=include_top,
@@ -274,7 +274,7 @@ def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=T
         )
         return model
     else:
-        x, output = build_resnetV1(
+        x, output = create_littleResNetV1(
                     input_shape,
                     depth=44,
                     include_top=include_top,
@@ -293,7 +293,7 @@ def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=T
 
     if create_model:
 
-        model = build_resnetV1(
+        model = create_littleResNetV1(
                 input_shape,
                 depth=56,
                 include_top=include_top,
@@ -306,7 +306,7 @@ def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=T
         )
         return model
     else:
-        x, output = build_resnetV1(
+        x, output = create_littleResNetV1(
                     input_shape,
                     depth=56,
                     include_top=include_top,
@@ -325,7 +325,7 @@ def Little_ResNet110(input_shape, classes=1000, include_top=False, create_model=
 
     if create_model:
 
-        model = build_resnetV1(
+        model = create_littleResNetV1(
                 input_shape,
                 depth=110,
                 include_top=include_top,
@@ -338,7 +338,7 @@ def Little_ResNet110(input_shape, classes=1000, include_top=False, create_model=
         )
         return model
     else:
-        x, output = build_resnetV1(
+        x, output = create_littleResNetV1(
                     input_shape,
                     depth=110,
                     include_top=include_top,
