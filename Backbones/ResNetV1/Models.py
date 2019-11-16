@@ -180,19 +180,6 @@ def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_
 # --------------------------------------------------------------------------------
 # Implementation taken from https://keras.io/examples/cifar10_resnet/
 
-# Model parameter
-# ------------------------------------------------------------\
-#                  |      | Orig Paper |           | sec/epoch |
-# Model            |layers| ResNet v1  |  Params   | GTX1080Ti |
-#                  |  v1  | %Accuracy  |           | v1        |
-# -------------------------------------------------------------|
-# Little_ResNet20  | 20   | 91.25      |   0.27M   |    35     |
-# Little_ResNet32  | 32   | 92.49      |   0.46M   |    50     |
-# Little_ResNet44  | 44   | 92.83      |   0.66M   |    70     |
-# Little_ResNet56  | 56   | 93.03      |   0.85M   |    90     |
-# Little_ResNet110 | 110  | 93.39+-0.16|   1.7M    |    165    |
-#-------------------------------------------------------------/
-
 def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=True):
 
     if create_model:
