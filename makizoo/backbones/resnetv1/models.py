@@ -1,4 +1,4 @@
-from .Builder import build_ResNetV1, create_LittleResNetV1
+from .builder import build_ResNetV1, create_LittleResNetV1
 import tensorflow as tf
 
 

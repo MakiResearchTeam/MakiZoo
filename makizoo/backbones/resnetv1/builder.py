@@ -1,8 +1,8 @@
-from .Blocks import identity_block as with_pointwise_IB
-from .Blocks import conv_block as with_pointwise_CB
+from .blocks import identity_block as with_pointwise_IB
+from .blocks import conv_block as with_pointwise_CB
 
-from .Blocks import without_pointwise_IB
-from .Blocks import without_pointwise_CB
+from .blocks import without_pointwise_IB
+from .blocks import without_pointwise_CB
 
 from .utils import get_batchnorm_params
 
