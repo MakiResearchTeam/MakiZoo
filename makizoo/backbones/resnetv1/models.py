@@ -6,7 +6,7 @@ import tensorflow as tf
 #   Standard Residual Models V1
 # --------------------------------------------------------------------------------
 
-def ResNet18(input_shape, classes=1000, include_top=False, create_model=True):
+def ResNet18(input_shape, classes=1000, include_top=False, create_model=False):
 
     if create_model:
 
@@ -40,7 +40,7 @@ def ResNet18(input_shape, classes=1000, include_top=False, create_model=True):
         return x, output
 
 
-def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
+def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=False):
 
     if create_model:
         model = build_ResNetV1(
@@ -74,7 +74,7 @@ def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_l
         return x, output
 
 
-def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
+def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=False):
 
     if create_model:
         model = build_ResNetV1(
@@ -108,7 +108,7 @@ def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_l
         return x, output
 
 
-def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
+def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=False):
 
     if create_model:
         model = build_ResNetV1(
@@ -142,7 +142,7 @@ def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_
         return x, output
 
 
-def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=True):
+def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_layer=False, create_model=False):
 
     if create_model:
         model = build_ResNetV1(
@@ -180,7 +180,8 @@ def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_
 # --------------------------------------------------------------------------------
 # Implementation taken from https://keras.io/examples/cifar10_resnet/
 
-def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=True):
+
+def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=False):
 
     if create_model:
 
@@ -212,7 +213,7 @@ def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=T
         return x, output
 
 
-def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=True):
+def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=False):
 
     if create_model:
 
@@ -244,7 +245,7 @@ def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=T
         return x, output
 
 
-def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=True):
+def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=False):
 
     if create_model:
 
@@ -276,7 +277,7 @@ def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=T
         return x, output
 
 
-def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=True):
+def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=False):
 
     if create_model:
 
@@ -308,7 +309,7 @@ def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=T
         return x, output
 
 
-def Little_ResNet110(input_shape, classes=1000, include_top=False, create_model=True):
+def Little_ResNet110(input_shape, classes=1000, include_top=False, create_model=False):
 
     if create_model:
 

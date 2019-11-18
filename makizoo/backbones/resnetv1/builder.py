@@ -185,13 +185,13 @@ def build_ResNetV1(
     if include_top:
         x = GlobalAvgPoolLayer(name='avg_pool')(x)
         output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits')(x)
+
+        if create_model:
+            return Classificator(in_x, output, name=name_model)
     else:
         output = x
 
-    if create_model:
-        return Classificator(in_x,output,name=name_model)
-    else:
-        return in_x, output
+    return in_x, output
 
 
 def create_LittleResNetV1(
