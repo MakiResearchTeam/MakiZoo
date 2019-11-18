@@ -28,47 +28,47 @@ def build_ResNetV1(
     """
     Parameters
     ----------
-        input_shape : List
-            Input shape of neural network. Example - [32, 128, 128, 3]
-            which mean 32 - batch size, two 128 - size of picture, 3 - number of colors
-        repetition : list
-            Number of repetition on certain depth
-        include_top : bool
-            If true when at the end of the neural network added Global Avg pooling and Dense Layer wothout
-            activation with the number of output neurons equal to num_classes
-        factorization_first_layer : bool
-            If true at the start of CNN factorizate convolution layer into 3 convolution layers
-        use_bias : bool
-            If true, when on layers used bias operation
-        activation : tf object
-            Activation on every convolution layer
-        block_type : str
-            Type of blocks.
-            with_pointwise - use pointwise operation in blocks, usually used in ResNet50, ResNet101, ResNet152
-            without_pointwise - block without pointwise operation, usually  used in ResNet18, ResNet34
-        create_model : bool
-            Return build classification model, otherwise return input MakiTensor and output MakiTensor
-        name_model : str
-            Name of model, if it will be created
-        init_filters : int
-            Started number of feature maps
-        min_reduction : int
-            Minimum reduction in blocks
-        activation_between_blocks : bool
-            Use activation between blocks
+    input_shape : List
+        Input shape of neural network. Example - [32, 128, 128, 3]
+        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors
+    repetition : list
+        Number of repetition on certain depth
+    include_top : bool
+        If true when at the end of the neural network added Global Avg pooling and Dense Layer wothout
+        activation with the number of output neurons equal to num_classes
+    factorization_first_layer : bool
+        If true at the start of CNN factorizate convolution layer into 3 convolution layers
+    use_bias : bool
+        If true, when on layers used bias operation
+    activation : tf object
+        Activation on every convolution layer
+    block_type : str
+        Type of blocks.
+        with_pointwise - use pointwise operation in blocks, usually used in ResNet50, ResNet101, ResNet152
+        without_pointwise - block without pointwise operation, usually  used in ResNet18, ResNet34
+    create_model : bool
+        Return build classification model, otherwise return input MakiTensor and output MakiTensor
+    name_model : str
+        Name of model, if it will be created
+    init_filters : int
+        Started number of feature maps
+    min_reduction : int
+        Minimum reduction in blocks
+    activation_between_blocks : bool
+        Use activation between blocks
     Returns
     ---------
-        x : MakiTensor
-            Output MakiTensor
-        out_f : int
-            Output number of feature maps
+    x : MakiTensor
+        Output MakiTensor
+    out_f : int
+        Number of output feature maps
     """
 
     if (type(repetition) is not list and type(repetition) is not tuple) or len(repetition) != 4:
         raise TypeError('repetition should be list of size 4')
 
     feature_maps = init_filters
-    bm_params = get_batchnorm_params()
+    bn_params = get_batchnorm_params()
 
     if block_type == 'with_pointwise':
         conv_block = with_pointwise_CB
@@ -90,19 +90,19 @@ def build_ResNetV1(
         x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
                                     activation=None, name='conv1_1/weights')(in_x)
 
-        x = BatchNormLayer(D=feature_maps, name='conv1_1/BatchNorm', **bm_params)(x)
+        x = BatchNormLayer(D=feature_maps, name='conv1_1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_1/activation')(x)
 
         x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, use_bias=use_bias,
                                     activation=None, name='conv1_2/weights')(x)
 
-        x = BatchNormLayer(D=feature_maps, name='conv1_2/BatchNorm', **bm_params)(x)
+        x = BatchNormLayer(D=feature_maps, name='conv1_2/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_2/activation')(x)
 
         x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=output_factorization_layer,
                                     use_bias=use_bias, stride=2, activation=None, name='conv1_3/weights')(x)
 
-        x = BatchNormLayer(D=output_factorization_layer, name='conv1_3/BatchNorm', **bm_params)(x)
+        x = BatchNormLayer(D=output_factorization_layer, name='conv1_3/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_3/activation')(x)
 
         feature_maps = output_factorization_layer
@@ -110,7 +110,7 @@ def build_ResNetV1(
         x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
                                     stride=2, activation=None,name='conv1/weights')(in_x)
         
-        x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm', **bm_params)(x)
+        x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='activation')(x)
     
     x = MaxPoolLayer(ksize=[1,3,3,1], name='max_pooling2d')(x)
@@ -135,7 +135,7 @@ def build_ResNetV1(
                         stride=1,
                         out_f=256,
                         reduction=min_reduction,
-                        bm_params=bm_params
+                        bm_params=bn_params
                     )[0]
                 else:
                     x = conv_block(
@@ -147,7 +147,7 @@ def build_ResNetV1(
                         activation=activation,
                         stride=1,
                         out_f=init_filters,
-                        bm_params=bm_params
+                        bm_params=bn_params
                     )[0]
             elif block == 0:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
@@ -159,7 +159,7 @@ def build_ResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     stride=2,
-                    bm_params=bm_params
+                    bm_params=bn_params
                 )[0]
             else:
                 x = iden_block(
@@ -169,7 +169,7 @@ def build_ResNetV1(
                     num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
-                    bm_params=bm_params
+                    bm_params=bn_params
                 )[0]
             num_block += 1
 
@@ -178,7 +178,7 @@ def build_ResNetV1(
                 num_activation += 3
     
     if not pointwise:
-        x = BatchNormLayer(D=x.get_shape()[-1], name='bn1', **bm_params)(x)
+        x = BatchNormLayer(D=x.get_shape()[-1], name='bn1', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='relu1')(x)
 
     if include_top:

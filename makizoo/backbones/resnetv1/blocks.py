@@ -154,26 +154,26 @@ def without_pointwise_IB(
     """
     Parameters
     ----------
-        in_f : int
-            Number of input feature maps. By default None (shape will be getted from tensor)
-        activation : tensorflow function
-            The function of activation, by default tf.nn.relu
-        use_bias : bool
-            Use bias on layers or not
-        block_id : int
-            Number of block (used in name of layers)
-        unit_id : int
-            Unit of block (used in name of layers)
-        num_block : int
-            Number of sum operation (used in name of layers)
-        bm_params : dict
-            Parameters for BatchNormLayer. If empty all parameters will have default valued
+    in_f : int
+        Number of input feature maps. By default None (shape will be getted from tensor)
+    activation : tensorflow function
+        The function of activation, by default tf.nn.relu
+    use_bias : bool
+        Use bias on layers or not
+    block_id : int
+        Number of block (used in name of layers)
+    unit_id : int
+        Unit of block (used in name of layers)
+    num_block : int
+        Number of sum operation (used in name of layers)
+    bm_params : dict
+        Parameters for BatchNormLayer. If empty all parameters will have default values
     Returns
     ---------
-        x : MakiTensor
-            Output MakiTensor
-        in_f : int
-            Output number of feature maps
+    x : MakiTensor
+        Output MakiTensor
+    in_f : int
+        Output number of feature maps
     """
 
     prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
