@@ -64,7 +64,7 @@ def build_ResNetV1(
             Output number of feature maps
     """
 
-    if (repetition is not list or repetition is not tuple) or len(repetition) != 4:
+    if (type(repetition) is not list and type(repetition) is not tuple) or len(repetition) != 4:
         raise TypeError('repetition should be list of size 4')
 
     feature_maps = init_filters
