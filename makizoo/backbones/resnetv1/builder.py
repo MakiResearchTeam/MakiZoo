@@ -135,7 +135,7 @@ def build_ResNetV1(
                         stride=1,
                         out_f=256,
                         reduction=min_reduction,
-                        bm_params=bn_params
+                        bn_params=bn_params
                     )[0]
                 else:
                     x = conv_block(
@@ -147,7 +147,7 @@ def build_ResNetV1(
                         activation=activation,
                         stride=1,
                         out_f=init_filters,
-                        bm_params=bn_params
+                        bn_params=bn_params
                     )[0]
             elif block == 0:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
@@ -159,7 +159,7 @@ def build_ResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     stride=2,
-                    bm_params=bn_params
+                    bn_params=bn_params
                 )[0]
             else:
                 x = iden_block(
@@ -169,7 +169,7 @@ def build_ResNetV1(
                     num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
-                    bm_params=bn_params
+                    bn_params=bn_params
                 )[0]
             num_block += 1
 
@@ -238,7 +238,7 @@ def create_LittleResNetV1(
                     activation=activation,
                     stride=1,
                     out_f=feature_maps,
-                    bm_params=bm_params
+                    bn_params=bm_params
                 )[0]
             elif block == 0:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
@@ -250,7 +250,7 @@ def create_LittleResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     stride=2,
-                    bm_params=bm_params
+                    bn_params=bm_params
                 )[0]
             else:
                 x = iden_block(
@@ -260,7 +260,7 @@ def create_LittleResNetV1(
                     num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
-                    bm_params=bm_params
+                    bn_params=bm_params
                 )[0]
 
             if activation_between_blocks:
