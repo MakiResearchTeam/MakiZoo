@@ -15,27 +15,29 @@ def identity_block(
     """
     Parameters
     ----------
-        in_f : int
-            Number of input feature maps. By default None (shape will be getted from tensor)
-        activation : tensorflow function
-            The function of activation, by default tf.nn.relu
-        use_bias : bool
-            Use bias on layers or not
-        block_id : int
-            Number of block (used in name of layers)
-        unit_id : int
-            Unit of block (used in name of layers)
-        num_block : int
-            Number of sum operation (used in name of layers)
-        bn_params : dict
-            Parameters for BatchNormLayer. If empty all parameters will have default valued
+    x : MakiTensor
+        Input MakiTensor
+    in_f : int
+        Number of input feature maps. By default None (shape will be getted from tensor)
+    activation : tensorflow function
+        The function of activation, by default tf.nn.relu
+    use_bias : bool
+        Use bias on layers or not
+    block_id : int
+        Number of block (used in name of layers)
+    unit_id : int
+        Unit of block (used in name of layers)
+    num_block : int
+        Number of sum operation (used in name of layers)
+    bn_params : dict
+        Parameters for BatchNormLayer. If empty all parameters will have default valued
 
     Returns
     ---------
-        x : MakiTensor
-            Output MakiTensor
-        in_f : int
-            Output number of feature maps
+    x : MakiTensor
+        Output MakiTensor
+    in_f : int
+        Output number of feature maps
     """
 
     prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
@@ -80,28 +82,31 @@ def conv_block(
     """
     Parameters
     ----------
-        in_f : int
-            Number of input feature maps. By default None (shape will be getted from tensor)
-        activation : tensorflow function
-            The function of activation, by default tf.nn.relu
-        use_bias : bool
-            Use bias on layers or not
-        out_f : int
-            Output number of feature maps
-        block_id : int
-            Number of block (used in name of layers)
-        unit_id : int
-            Unit of block (used in name of layers)
-        num_block : int
-            Number of sum operation (used in name of layers)
-        bn_params : dict
-            Parameters for BatchNormLayer. If empty all parameters will have default valued
+    x : MakiTensor
+        Input MakiTensor
+    in_f : int
+        Number of input feature maps. By default None (shape will be getted from tensor)
+    activation : tensorflow function
+        The function of activation, by default tf.nn.relu
+    use_bias : bool
+        Use bias on layers or not
+    out_f : int
+        Output number of feature maps
+    block_id : int
+        Number of block (used in name of layers)
+    unit_id : int
+        Unit of block (used in name of layers)
+    num_block : int
+        Number of sum operation (used in name of layers)
+    bn_params : dict
+        Parameters for BatchNormLayer. If empty all parameters will have default valued
+
     Returns
     ---------
-        x : MakiTensor
-            Output MakiTensor
-        out_f : int
-            Output number of feature maps
+    x : MakiTensor
+        Output MakiTensor
+    out_f : int
+        Output number of feature maps
     """
 
     prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
@@ -154,6 +159,8 @@ def without_pointwise_IB(
     """
     Parameters
     ----------
+    x : MakiTensor
+        Input MakiTensor
     in_f : int
         Number of input feature maps. By default None (shape will be getted from tensor)
     activation : tensorflow function
@@ -168,6 +175,7 @@ def without_pointwise_IB(
         Number of sum operation (used in name of layers)
     bn_params : dict
         Parameters for BatchNormLayer. If empty all parameters will have default values
+
     Returns
     ---------
     x : MakiTensor
@@ -218,28 +226,31 @@ def without_pointwise_CB(
     """
     Parameters
     ----------
-        in_f : int
-            Number of input feature maps. By default is None (shape will be getted from tensor)
-        out_f : int
-            Number of output feature maps. By default is None which means out_f = 2 * in_f
-        activation : tensorflow function
-            The function of activation. By default tf.nn.relu
-        use_bias : bool
-            Use bias on layers or not
-        block_id : int
-            Number of block (used in name of layers)
-        unit_id : int
-            Unit of block (used in name of layers)
-        num_block : int
-            Number of sum operation (used in name of layers)
-        bn_params : dict
-            Parameters for BatchNormLayer. If empty all parameters will have default valued
+    x : MakiTensor
+        Input MakiTensor
+    in_f : int
+        Number of input feature maps. By default is None (shape will be getted from tensor)
+    out_f : int
+        Number of output feature maps. By default is None which means out_f = 2 * in_f
+    activation : tensorflow function
+        The function of activation. By default tf.nn.relu
+    use_bias : bool
+        Use bias on layers or not
+    block_id : int
+        Number of block (used in name of layers)
+    unit_id : int
+        Unit of block (used in name of layers)
+    num_block : int
+        Number of sum operation (used in name of layers)
+    bn_params : dict
+        Parameters for BatchNormLayer. If empty all parameters will have default valued
+
     Returns
     ---------
-        x : MakiTensor
-            Output MakiTensor
-        out_f : int
-            Output number of feature maps
+    x : MakiTensor
+        Output MakiTensor
+    out_f : int
+        Output number of feature maps
     """
     prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
 

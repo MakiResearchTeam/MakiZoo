@@ -34,10 +34,10 @@ def build_ResNetV1(
     repetition : list
         Number of repetition on certain depth
     include_top : bool
-        If true when at the end of the neural network added Global Avg pooling and Dense Layer wothout
+        If true when at the end of the neural network added Global Avg pooling and Dense Layer without
         activation with the number of output neurons equal to num_classes
     factorization_first_layer : bool
-        If true at the start of CNN factorizate convolution layer into 3 convolution layers
+        If true at the start of CNN factorize convolution layer into 3 convolution layers
     use_bias : bool
         If true, when on layers used bias operation
     activation : tf object
