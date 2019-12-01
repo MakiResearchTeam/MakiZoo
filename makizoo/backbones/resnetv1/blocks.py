@@ -7,7 +7,7 @@ def identity_block(
         x : MakiTensor,
         block_id: int,
         unit_id: int,
-        num_block: int,
+        num_block=None,
         in_f=None,
         use_bias=False,
         activation=tf.nn.relu,
@@ -41,6 +41,11 @@ def identity_block(
     """
 
     prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
+    if num_block is None:
+        num_block = prefix_name + '/sum_operation'
+    else:
+        num_block = 'add_' + str(num_block)
+
     if in_f is None:
         in_f = x.get_shape()[-1]
 
@@ -63,7 +68,7 @@ def identity_block(
                                                                                 
     mx = BatchNormLayer(D=in_f, name=prefix_name + '/bottleneck_v1/conv3/BatchNorm', **bn_params)(mx)
 
-    x = SumLayer(name='add' + str(num_block))([mx,x])
+    x = SumLayer(name=num_block)([mx,x])
 
     return x, in_f
 
@@ -71,7 +76,7 @@ def conv_block(
         x : MakiTensor,
         block_id: int,
         unit_id: int,
-        num_block: int,
+        num_block=None,
         in_f=None,
         use_bias=False,
         activation=tf.nn.relu,
@@ -111,6 +116,11 @@ def conv_block(
 
     prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
 
+    if num_block is None:
+        num_block = prefix_name + '/sum_operation'
+    else:
+        num_block = 'add_' + str(num_block)
+
     if in_f is None:
         in_f = x.get_shape()[-1]
 
@@ -142,7 +152,7 @@ def conv_block(
                                                                                 
     sx = BatchNormLayer(D=out_f, name=prefix_name + '/bottleneck_v1/shortcut/BatchNorm', **bn_params)(sx)
 
-    x = SumLayer(name='add' + str(num_block))([mx,sx])
+    x = SumLayer(name=num_block)([mx,sx])
 
     return x, out_f
 
@@ -151,7 +161,7 @@ def without_pointwise_IB(
         x : MakiTensor,
         block_id: int,
         unit_id: int,
-        num_block: int,
+        num_block=None,
         in_f=None,
         use_bias=False,
         activation=tf.nn.relu,
@@ -186,6 +196,11 @@ def without_pointwise_IB(
 
     prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
 
+    if num_block is None:
+        num_block = prefix_name + '/sum_operation'
+    else:
+        num_block = 'add_' + str(num_block)
+
     if in_f is None:
         in_f = x.get_shape()[-1]
 
@@ -207,7 +222,7 @@ def without_pointwise_IB(
     mx = ConvLayer(kw=3, kh=3, in_f=in_f, out_f=in_f, activation=None,
                                 padding='VALID', use_bias=use_bias, name=prefix_name + 'conv2')(mx)                        
 
-    x = SumLayer(name='add' + str(num_block))([mx,x])
+    x = SumLayer(name=num_block)([mx,x])
 
     return x, in_f
 
@@ -216,7 +231,7 @@ def without_pointwise_CB(
         x : MakiTensor,
         block_id: int,
         unit_id: int,
-        num_block: int,
+        num_block=None,
         in_f=None,
         use_bias=False,
         activation=tf.nn.relu,
@@ -253,6 +268,11 @@ def without_pointwise_CB(
         Output number of feature maps
     """
     prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
+
+    if num_block is None:
+        num_block = prefix_name + '/sum_operation'
+    else:
+        num_block = 'add_' + str(num_block)
 
     if in_f is None:
         in_f = x.get_shape()[-1]

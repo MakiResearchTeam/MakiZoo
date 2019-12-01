@@ -20,26 +20,29 @@ def build_VGG(
     ----------
     input_shape : List
         Input shape of neural network. Example - [32, 128, 128, 3]
-        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors
+        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
     repetition : int
-        Number of repetition convolution per block, usually 3 for VGG16, 4 for VGG 19
+        Number of repetition convolution per block, usually 3 for VGG16, 4 for vgg 19.
     include_top : bool
         If true when at the end of the neural network added Global Avg pooling and Dense Layer without
-        activation with the number of output neurons equal to num_classes
+        activation with the number of output neurons equal to num_classes.
     use_bias : bool
-        If true, when on layers used bias operation
+        If true, when on layers used bias operation.
     activation : tf object
-        Activation on every convolution layer
+        Activation on every convolution layer.
     create_model : bool
-        Return build classification model, otherwise return input MakiTensor and output MakiTensor
+        Return build classification model, otherwise return input MakiTensor and output MakiTensor.
     name_model : str
-        Name of model, if it will be created
+        Name of model, if it will be created.
+
     Returns
     ---------
-    x : MakiTensor
-        Output MakiTensor
-    out_f : int
-        Number of output feature maps
+    in_x : MakiTensor
+        Input MakiTensor.
+    output : MakiTensor
+        Output MakiTensor.
+    Classificator : MakiFlow.Classificator
+        Constructed model
     """
 
     if repetition <= 0:

@@ -30,38 +30,41 @@ def build_ResNetV1(
     ----------
     input_shape : List
         Input shape of neural network. Example - [32, 128, 128, 3]
-        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors
+        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
     repetition : list
-        Number of repetition on certain depth
+        Number of repetition on certain depth.
     include_top : bool
         If true when at the end of the neural network added Global Avg pooling and Dense Layer without
-        activation with the number of output neurons equal to num_classes
+        activation with the number of output neurons equal to num_classes.
     factorization_first_layer : bool
-        If true at the start of CNN factorize convolution layer into 3 convolution layers
+        If true at the start of CNN factorize convolution layer into 3 convolution layers.
     use_bias : bool
-        If true, when on layers used bias operation
+        If true, when on layers used bias operation.
     activation : tf object
-        Activation on every convolution layer
+        Activation on every convolution layer.
     block_type : str
         Type of blocks.
-        with_pointwise - use pointwise operation in blocks, usually used in ResNet50, ResNet101, ResNet152
-        without_pointwise - block without pointwise operation, usually  used in ResNet18, ResNet34
+        with_pointwise - use pointwise operation in blocks, usually used in ResNet50, ResNet101, ResNet152.
+        without_pointwise - block without pointwise operation, usually  used in ResNet18, ResNet34.
     create_model : bool
-        Return build classification model, otherwise return input MakiTensor and output MakiTensor
+        Return build classification model, otherwise return input MakiTensor and output MakiTensor.
     name_model : str
-        Name of model, if it will be created
+        Name of model, if it will be created.
     init_filters : int
-        Started number of feature maps
+        Started number of feature maps.
     min_reduction : int
-        Minimum reduction in blocks
+        Minimum reduction in blocks.
     activation_between_blocks : bool
-        Use activation between blocks
+        Use activation between blocks.
+
     Returns
     ---------
-    x : MakiTensor
-        Output MakiTensor
-    out_f : int
-        Number of output feature maps
+    in_x : MakiTensor
+        Input MakiTensor.
+    output : int
+        Output MakiTensor.
+    Classificator : MakiFlow.Classificator
+        Constructed model
     """
 
     if (type(repetition) is not list and type(repetition) is not tuple) or len(repetition) != 4:
@@ -203,7 +206,35 @@ def create_LittleResNetV1(
         create_model=False,
         name_model='MakiClassificator',
         activation_between_blocks=True):
-        
+    """
+    These type of ResNet tests on CIFAR-10 and CIFAR-100
+
+    Parameters
+    ----------
+    input_shape : List
+        Input shape of neural network. Example - [32, 128, 128, 3]
+        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
+    depth : list
+        Maximum number of layers.
+    use_bias : bool
+        If true, when on layers used bias operation.
+    activation : tf object
+        Activation on every convolution layer.
+    create_model : bool
+        Return build classification model, otherwise return input MakiTensor and output MakiTensor.
+    name_model : str
+        Name of model, if it will be created.
+    activation_between_blocks : bool
+        Use activation between blocks.
+
+    Returns
+    ---------
+    in_x : MakiTensor
+        Input MakiTensor.
+    output : int
+        Output MakiTensor.
+    """
+
     feature_maps = 16
     bm_params = get_batchnorm_params()
 
