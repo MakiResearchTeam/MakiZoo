@@ -35,7 +35,7 @@ def MobileNetV2_0_75(input_shape, classes=1000, include_top=False, create_model=
         use_bias=False,
         activation=tf.nn.relu6,
         create_model=create_model,
-        name_model='MobileNetV2_1_0',
+        name_model='MobileNetV2_0_75',
         alpha=0.75,
         expansion=6
     )
@@ -48,7 +48,7 @@ def MobileNetV2_1_3(input_shape, classes=1000, include_top=False, create_model=F
         use_bias=False,
         activation=tf.nn.relu6,
         create_model=create_model,
-        name_model='MobileNetV2_1_0',
+        name_model='MobileNetV2_1_3',
         alpha=1.3,
         expansion=6
     )
