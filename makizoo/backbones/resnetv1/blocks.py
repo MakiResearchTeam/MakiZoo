@@ -16,28 +16,26 @@ def identity_block(
     Parameters
     ----------
     x : MakiTensor
-        Input MakiTensor
+        Input MakiTensor.
     in_f : int
-        Number of input feature maps. By default None (shape will be getted from tensor)
+        Number of input feature maps. By default None (shape will be getted from tensor).
     activation : tensorflow function
-        The function of activation, by default tf.nn.relu
+        The function of activation, by default tf.nn.relu.
     use_bias : bool
-        Use bias on layers or not
+        Use bias on layers or not.
     block_id : int
-        Number of block (used in name of layers)
+        Number of block (used in name of layers).
     unit_id : int
-        Unit of block (used in name of layers)
+        Unit of block (used in name of layers).
     num_block : int
-        Number of sum operation (used in name of layers)
+        Number of sum operation (used in name of layers).
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued
+        Parameters for BatchNormLayer. If empty all parameters will have default valued.
 
     Returns
     ---------
     x : MakiTensor
-        Output MakiTensor
-    in_f : int
-        Output number of feature maps
+        Output MakiTensor.
     """
 
     prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
@@ -70,7 +68,7 @@ def identity_block(
 
     x = SumLayer(name=num_block)([mx,x])
 
-    return x, in_f
+    return x
 
 def conv_block(
         x : MakiTensor,
@@ -88,30 +86,28 @@ def conv_block(
     Parameters
     ----------
     x : MakiTensor
-        Input MakiTensor
+        Input MakiTensor.
     in_f : int
-        Number of input feature maps. By default None (shape will be getted from tensor)
+        Number of input feature maps. By default None (shape will be getted from tensor).
     activation : tensorflow function
-        The function of activation, by default tf.nn.relu
+        The function of activation, by default tf.nn.relu.
     use_bias : bool
-        Use bias on layers or not
+        Use bias on layers or not.
     out_f : int
-        Output number of feature maps
+        Output number of feature maps.
     block_id : int
-        Number of block (used in name of layers)
+        Number of block (used in name of layers).
     unit_id : int
-        Unit of block (used in name of layers)
+        Unit of block (used in name of layers).
     num_block : int
-        Number of sum operation (used in name of layers)
+        Number of sum operation (used in name of layers).
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued
+        Parameters for BatchNormLayer. If empty all parameters will have default valued.
 
     Returns
     ---------
     x : MakiTensor
-        Output MakiTensor
-    out_f : int
-        Output number of feature maps
+        Output MakiTensor.
     """
 
     prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
@@ -154,7 +150,7 @@ def conv_block(
 
     x = SumLayer(name=num_block)([mx,sx])
 
-    return x, out_f
+    return x
 
 
 def without_pointwise_IB(
@@ -170,28 +166,26 @@ def without_pointwise_IB(
     Parameters
     ----------
     x : MakiTensor
-        Input MakiTensor
+        Input MakiTensor.
     in_f : int
-        Number of input feature maps. By default None (shape will be getted from tensor)
+        Number of input feature maps. By default None (shape will be getted from tensor).
     activation : tensorflow function
-        The function of activation, by default tf.nn.relu
+        The function of activation, by default tf.nn.relu.
     use_bias : bool
-        Use bias on layers or not
+        Use bias on layers or not.
     block_id : int
-        Number of block (used in name of layers)
+        Number of block (used in name of layers).
     unit_id : int
-        Unit of block (used in name of layers)
+        Unit of block (used in name of layers).
     num_block : int
-        Number of sum operation (used in name of layers)
+        Number of sum operation (used in name of layers).
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default values
+        Parameters for BatchNormLayer. If empty all parameters will have default values.
 
     Returns
     ---------
     x : MakiTensor
-        Output MakiTensor
-    in_f : int
-        Output number of feature maps
+        Output MakiTensor.
     """
 
     prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
@@ -224,7 +218,7 @@ def without_pointwise_IB(
 
     x = SumLayer(name=num_block)([mx,x])
 
-    return x, in_f
+    return x
 
 
 def without_pointwise_CB(
@@ -242,30 +236,28 @@ def without_pointwise_CB(
     Parameters
     ----------
     x : MakiTensor
-        Input MakiTensor
+        Input MakiTensor.
     in_f : int
-        Number of input feature maps. By default is None (shape will be getted from tensor)
+        Number of input feature maps. By default is None (shape will be getted from tensor).
     out_f : int
-        Number of output feature maps. By default is None which means out_f = 2 * in_f
+        Number of output feature maps. By default is None which means out_f = 2 * in_f.
     activation : tensorflow function
-        The function of activation. By default tf.nn.relu
+        The function of activation. By default tf.nn.relu.
     use_bias : bool
-        Use bias on layers or not
+        Use bias on layers or not.
     block_id : int
-        Number of block (used in name of layers)
+        Number of block (used in name of layers).
     unit_id : int
-        Unit of block (used in name of layers)
+        Unit of block (used in name of layers).
     num_block : int
-        Number of sum operation (used in name of layers)
+        Number of sum operation (used in name of layers).
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued
+        Parameters for BatchNormLayer. If empty all parameters will have default valued.
 
     Returns
     ---------
     x : MakiTensor
-        Output MakiTensor
-    out_f : int
-        Output number of feature maps
+        Output MakiTensor.
     """
     prefix_name = 'stage' + str(block_id) + '_unit' + str(unit_id) + '_'
 
@@ -301,4 +293,4 @@ def without_pointwise_CB(
                                                                                
     x = SumLayer(name='add' + str(num_block))([mx,sx])
 
-    return x, out_f
+    return x

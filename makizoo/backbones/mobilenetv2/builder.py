@@ -23,17 +23,17 @@ def build_MobileNetV2(
         Input MakiTensor.
     expansion : int
         Magnification multiplier of feature maps.
+    input_shape : List
+        Input shape of neural network. Example - [32, 128, 128, 3]
+        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
     alpha : int
         Controls the width of the network. This is known as the width multiplier in the MobileNetV2 paper.
         If alpha < 1.0, proportionally decreases the number of filters.
         If alpha > 1.0, proportionally increases the number of filters.
         If alpha = 1, default number of filters from the paper are used at each layer.
-    block_id : int
-        Number of block (used in name of layers).
-    in_f : int
-        Number of input feature maps. By default None (shape will be getted from tensor).
-    out_f : int
-        Number of output feature maps. By default None (shape will same as `in_f`).
+    include_top : bool
+        If true when at the end of the neural network added Global Avg pooling and Dense Layer without
+        activation with the number of output neurons equal to num_classes.
     activation : tensorflow function
         The function of activation, by default tf.nn.relu6.
     use_bias : bool
@@ -44,7 +44,12 @@ def build_MobileNetV2(
         If true, input feature maps `in_f` will be expand to `expansion` * `in_f`.
     bn_params : dict
         Parameters for BatchNormLayer. If empty all parameters will have default valued.
-
+    create_model : bool
+        Return build classification model, otherwise return input MakiTensor and output MakiTensor.
+    name_model : str
+        Name of model, if it will be created.
+    num_classes : int
+        Number of classes that you need to classify.
     Returns
     ---------
     in_x : MakiTensor
@@ -52,7 +57,7 @@ def build_MobileNetV2(
     output : int
         Output MakiTensor.
     Classificator : MakiFlow.Classificator
-        Constructed model
+        Constructed model.
     """
     if bm_params is None or len(bm_params) == 0:
         bm_params = get_batchnorm_params()
@@ -75,71 +80,71 @@ def build_MobileNetV2(
     x = BatchNormLayer(D=first_filt, name='Conv/BatchNorm', **bm_params)(x)
     x = ActivationLayer(activation=activation, name='Conv_relu')(x)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=first_filt, out_f=16, alpha=alpha, expansion=1,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=16, alpha=alpha, expansion=1,
                                     block_id=0, use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=False, use_skip_connection=False)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=24, alpha=alpha, stride=2, expansion=expansion,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=24, alpha=alpha, stride=2, expansion=expansion,
                                     block_id=1, use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=False)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=24, alpha=alpha, expansion=expansion, block_id=2,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=24, alpha=alpha, expansion=expansion, block_id=2,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=32, alpha=alpha, stride=2,expansion=expansion,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha, stride=2,expansion=expansion,
                                     block_id=3, use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=False)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=32, alpha=alpha,expansion=expansion,block_id=4,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha,expansion=expansion,block_id=4,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=32, alpha=alpha, expansion=expansion, block_id=5,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha, expansion=expansion, block_id=5,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=64, alpha=alpha, stride=2, expansion=expansion,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=64, alpha=alpha, stride=2, expansion=expansion,
                                     block_id=6, use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=False)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f,out_f=64, alpha=alpha, expansion=expansion, block_id=7,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1],out_f=64, alpha=alpha, expansion=expansion, block_id=7,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=64, alpha=alpha, expansion=expansion, block_id=8,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=64, alpha=alpha, expansion=expansion, block_id=8,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f,out_f=64, alpha=alpha, expansion=expansion, block_id=9,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1],out_f=64, alpha=alpha, expansion=expansion, block_id=9,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=in_new_f, out_f=96, alpha=alpha,expansion=expansion, block_id=10,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=10,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=96, alpha=alpha,expansion=expansion, block_id=11,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=11,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=96, alpha=alpha,expansion=expansion, block_id=12,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=12,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=160, alpha=alpha, stride=2, expansion=expansion, block_id=13,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, stride=2, expansion=expansion, block_id=13,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=False)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=160, alpha=alpha, expansion=expansion, block_id=14,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, expansion=expansion, block_id=14,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=160, alpha=alpha, expansion=expansion, block_id=15,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, expansion=expansion, block_id=15,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=True)
 
-    x, output_f = inverted_res_block(inputs=x, in_f=output_f, out_f=320, alpha=alpha, expansion=expansion, block_id=16,
+    x = inverted_res_block(inputs=x, in_f=x.get_shape()[-1], out_f=320, alpha=alpha, expansion=expansion, block_id=16,
                                     use_bias=use_bias, activation=activation,
                                     bm_params=bm_params, use_expand=True, use_skip_connection=False)
 
@@ -161,8 +166,6 @@ def build_MobileNetV2(
 
     x = BatchNormLayer(D=last_block_filters, name='Conv_1/BatchNorm', **bm_params)(x)
     pred_top = ActivationLayer(activation=activation, name='out_relu')(x)
-
-    output = None
 
     if include_top:
         x = GlobalAvgPoolLayer(name='global_avg')(pred_top)

@@ -57,21 +57,21 @@ def build_VGG(
         # First block
         if i == 1:
             x = repeat_n_convLayers(in_x, num_block=i, n=2, out_f=64,
-                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)[0]
+                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
         # Second block
         elif i == 2:
             x = repeat_n_convLayers(x, num_block=i, n=2,
-                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)[0]
+                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
         else:
             x = repeat_n_convLayers(x, num_block=i, n=repetition,
-                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)[0]
+                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
 
     if include_top:
         x = FlattenLayer(name='flatten')(x)
         in_f = x.get_shape()[1] * x.get_shape()[2] * x.get_shape()[3]
         x = DenseLayer(in_d=in_f, out_d=4096, name='fc6')(x)
         x = DenseLayer(in_d=4096, out_d=4096, name='fc7')(x)
-        output = DenseLayer(in_d=4096, out_d=1000, activation=None, name='fc8')(x)
+        output = DenseLayer(in_d=4096, out_d=num_classes, activation=None, name='fc8')(x)
 
         if create_model:
             return Classificator(in_x, output, name=name_model)

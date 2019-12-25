@@ -139,7 +139,7 @@ def build_ResNetV1(
                         out_f=256,
                         reduction=min_reduction,
                         bn_params=bn_params
-                    )[0]
+                    )
                 else:
                     x = conv_block(
                         x=x, 
@@ -151,7 +151,7 @@ def build_ResNetV1(
                         stride=1,
                         out_f=init_filters,
                         bn_params=bn_params
-                    )[0]
+                    )
             elif block == 0:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
                 x = conv_block(
@@ -163,7 +163,7 @@ def build_ResNetV1(
                     activation=activation,
                     stride=2,
                     bn_params=bn_params
-                )[0]
+                )
             else:
                 x = iden_block(
                     x=x,
@@ -173,7 +173,7 @@ def build_ResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     bn_params=bn_params
-                )[0]
+                )
             num_block += 1
 
             if activation_between_blocks:
@@ -270,7 +270,7 @@ def create_LittleResNetV1(
                     stride=1,
                     out_f=feature_maps,
                     bn_params=bm_params
-                )[0]
+                )
             elif block == 0:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
                 x = conv_block(
@@ -282,7 +282,7 @@ def create_LittleResNetV1(
                     activation=activation,
                     stride=2,
                     bn_params=bm_params
-                )[0]
+                )
             else:
                 x = iden_block(
                     x=x,
@@ -292,7 +292,7 @@ def create_LittleResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     bn_params=bm_params
-                )[0]
+                )
 
             if activation_between_blocks:
                 x = ActivationLayer(activation=activation, name='activation_' + str(num_activation))(x)

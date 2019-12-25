@@ -18,28 +18,26 @@ def repeat_n_convLayers(
     Parameters
     ----------
     x : MakiTensor
-        Input MakiTensor
+        Input MakiTensor.
     num_block : int
-        Number of block (used in name of layers)
+        Number of block (used in name of layers).
     n : int
-        Number of convolutions in blocks
+        Number of convolutions in blocks.
     use_maxpoolLayer : bool
-        If true, after all convolutions will be used MaxPoolLayer
+        If true, after all convolutions will be used MaxPoolLayer.
     in_f : int
-        Number of input feature maps. By default None (shape will be getted from tensor)
+        Number of input feature maps. By default None (shape will be getted from tensor).
     activation : tensorflow function
-        The function of activation, by default tf.nn.relu
+        The function of activation, by default tf.nn.relu.
     use_bias : bool
-        Use bias on layers or not
+        Use bias on layers or not.
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued
+        Parameters for BatchNormLayer. If empty all parameters will have default valued.
 
     Returns
     ---------
     x : MakiTensor
-        Output MakiTensor
-    in_f : int
-        Output number of feature maps
+        Output MakiTensor.
     """
 
     prefix_name = f'conv{num_block}/conv{num_block}_'
@@ -60,7 +58,7 @@ def repeat_n_convLayers(
     if use_maxpoolLayer:
         x = MaxPoolLayer(name=f'block{num_block}_pool', **maxpool_params)(x)
 
-    return x, out_f
+    return x
 
 
 

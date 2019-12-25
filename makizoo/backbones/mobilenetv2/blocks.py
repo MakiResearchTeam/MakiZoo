@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from .utils import make_divisible
 
+from makiflow.layers import *
 
 def inverted_res_block(
         x,
@@ -120,7 +121,7 @@ def inverted_res_block(
     x = BatchNormLayer(D=pointwise_f, name=prefix+'project/BatchNorm', **bn_params)(x)
 
     if use_skip_connection:
-        return SumLayer(name=prefix+'add')([inputs,x]), pointwise_f
+        return SumLayer(name=prefix+'add')([inputs,x])
     else:
-        return x, pointwise_f
+        return x
 
