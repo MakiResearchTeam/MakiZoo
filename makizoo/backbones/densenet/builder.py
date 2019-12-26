@@ -21,7 +21,7 @@ def build_DenseNet(
         reduction=0.0,
         nb_blocks=3,
         dropout_p_keep=None,
-        bm_params={}
+        bn_params={}
     ):
     """
      Parameters
@@ -68,7 +68,7 @@ def build_DenseNet(
      Classificator : MakiFlow.Classificator
          Constructed model.
      """
-    if bm_params is None or len(bm_params) == 0:
+    if bn_params is None or len(bn_params) == 0:
         bm_params = get_batchnorm_params()
     compression = 1 - reduction
 
@@ -84,7 +84,7 @@ def build_DenseNet(
         x = ConvLayer(kw=7,kh=7,in_f=3, stride=2, out_f=growth_rate * 2, activation=None, use_bias=use_bias,
                 name='conv1/conv', padding='VALID')(x)
 
-        x = BatchNormLayer(D=growth_rate * 2, name='conv1/bn', **bm_params)(x)
+        x = BatchNormLayer(D=growth_rate * 2, name='conv1/bn', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1/relu')(x)
         x = ZeroPaddingLayer(padding=[[1,1],[1,1]], name='zero_padding2d_5')(x)
 
@@ -98,18 +98,18 @@ def build_DenseNet(
         # dense block
         x = dense_block(x=x, nb_layers=nb_layers[block_index], stage=block_index+2,
                 growth_rate=growth_rate, dropout_p_keep=dropout_p_keep, use_bottleneck=use_bottleneck,
-                        activation=activation, use_bias=use_bias, bm_params=bm_params)
+                        activation=activation, use_bias=use_bias, bn_params=bn_params)
 
         # transition block
         x = transition_layer(x=x,
              dropout_p_keep=dropout_p_keep, number=block_index+2, compression=compression,
-                        activation=activation, use_bias=use_bias, bm_params=bm_params)
+                        activation=activation, use_bias=use_bias, bn_params=bn_params)
 
     x = dense_block(x=x, nb_layers=nb_layers[-1], stage=len(nb_layers)+1,
             growth_rate=growth_rate, dropout_p_keep=dropout_p_keep, use_bottleneck=use_bottleneck,
-                        activation=activation, use_bias=use_bias, bm_params=bm_params)
+                        activation=activation, use_bias=use_bias, bn_params=bn_params)
 
-    x = BatchNormLayer(D=x.get_shape()[-1], name='bn', **bm_params)(x)
+    x = BatchNormLayer(D=x.get_shape()[-1], name='bn', **bn_params)(x)
     x = ActivationLayer(activation=activation, name='relu')(x)
     if include_top:
         x = GlobalAvgPoolLayer(name='avg_pool')(x)
