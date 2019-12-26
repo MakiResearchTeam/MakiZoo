@@ -52,13 +52,14 @@ def transition_layer(
 
     return x
 
-def bottleneck_layer(
+def conv_layer(
         x,
         growth_rate,
         dropout_p_keep,
         stage,
         block,
         multiply=4,
+        use_bottleneck=True,
         activation = tf.nn.relu,
         use_bias = False,
         bn_params = {}
@@ -72,6 +73,8 @@ def bottleneck_layer(
         Coefficient `k` from original papep, https://arxiv.org/pdf/1608.06993.pdf .
     dropout_p_keep : int
         The probability that each element of x is not discarded.
+    use_bottleneck : bool
+        Use bottleneck block or not.
     stage : int
         Number of stage (used in name of layers).
     block : int
@@ -93,19 +96,21 @@ def bottleneck_layer(
     prefix = f'conv{str(stage)}_block{str(block)}_'
 
     in_f = x.get_shape()[-1]
-    growth_f = multiply * growth_rate
 
     x = BatchNormLayer(D=in_f, name=prefix + '0_bn', **bn_params)(x)
     x = ActivationLayer(activation=activation, name=prefix + '0_relu')(x)
-    x = ConvLayer(kw=1,kh=1,in_f=in_f, out_f=growth_f, activation=None, use_bias=use_bias,
-            name=prefix + '1_conv', padding='VALID')(x)
+    if use_bottleneck:
+        growth_f = multiply * growth_rate
+        x = ConvLayer(kw=1,kh=1,in_f=in_f, out_f=growth_f, activation=None, use_bias=use_bias,
+                name=prefix + '1_conv', padding='VALID')(x)
 
-    if dropout_p_keep is not None:
-        x = DropoutLayer(p_keep=dropout_p_keep, name=prefix + '1_dropout')(x)
+        if dropout_p_keep is not None:
+            x = DropoutLayer(p_keep=dropout_p_keep, name=prefix + '1_dropout')(x)
 
-    x = BatchNormLayer(D=growth_f, name=prefix + '1_bn', **bn_params)(x)
-    x = ActivationLayer(activation=activation, name=prefix + '1_relu')(x)
-    x = ConvLayer(kw=3,kh=3,in_f=growth_f, out_f=growth_rate, activation=None, use_bias=use_bias,
+        x = BatchNormLayer(D=growth_f, name=prefix + '1_bn', **bn_params)(x)
+        x = ActivationLayer(activation=activation, name=prefix + '1_relu')(x)
+
+    x = ConvLayer(kw=3,kh=3,in_f=x.get_shape()[-1], out_f=growth_rate, activation=None, use_bias=use_bias,
             name=prefix + '2_conv')(x)
 
     if dropout_p_keep is not None:
@@ -120,6 +125,7 @@ def dense_block(
         stage,
         growth_rate,
         dropout_p_keep,
+        use_bottleneck=True,
         activation=tf.nn.relu,
         use_bias=False,
         bn_params={}
@@ -133,6 +139,8 @@ def dense_block(
         Coefficient `k` from original papep, https://arxiv.org/pdf/1608.06993.pdf .
     dropout_p_keep : int
         The probability that each element of x is not discarded.
+    use_bottleneck : bool
+        Use bottleneck block or not in conv_layer.
     stage : int
         Number of stage (used in name of layers).
     nb_layers : int
@@ -152,8 +160,8 @@ def dense_block(
     concat_layers = x
 
     for i in range(nb_layers):
-        x = bottleneck_layer(x=concat_layers, growth_rate=growth_rate, dropout_p_keep=dropout_p_keep, stage=stage, block=i+1,
-                             activation=activation, use_bias=use_bias, bn_params=bn_params)
+        x = conv_layer(x=concat_layers, growth_rate=growth_rate, dropout_p_keep=dropout_p_keep, stage=stage, block=i+1,
+                             activation=activation,use_bottleneck=use_bottleneck, use_bias=use_bias, bn_params=bn_params)
 
         concat_layers = ConcatLayer(name=f'conv{stage}_block{i+1}_concat')([concat_layers, x])
 
