@@ -69,7 +69,7 @@ def build_DenseNet(
          Constructed model.
      """
     if bn_params is None or len(bn_params) == 0:
-        bm_params = get_batchnorm_params()
+        bn_params = get_batchnorm_params()
     compression = 1 - reduction
 
     if len(nb_layers) == 0:
