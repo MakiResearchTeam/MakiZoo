@@ -73,7 +73,7 @@ def build_VGG(
                                     use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
 
     # Last block
-    x = repeat_n_convLayers(x, out_f=x.get_shape()[-1], num_block=number_of_blocks+1, n=repetition,
+    x = repeat_n_convLayers(x, out_f=x.get_shape()[-1], num_block=number_of_blocks, n=repetition,
                                     use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
 
     if include_top:
