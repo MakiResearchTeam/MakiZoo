@@ -9,11 +9,13 @@ from .blocks import repeat_n_convLayers
 def build_VGG(
     input_shape,
     repetition=3,
+    number_of_blocks=5,
     include_top=False,
     num_classes=1000,
     use_bias=False,
     activation=tf.nn.relu,
     create_model=False,
+    init_fm=64,
     name_model='MakiClassificator'):
     """
     Parameters
@@ -23,11 +25,15 @@ def build_VGG(
         which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
     repetition : int
         Number of repetition convolution per block, usually 3 for VGG16, 4 for vgg 19.
+    number_of_blocks : int
+        Number of blocks of `repetition`.
     include_top : bool
         If true when at the end of the neural network added Global Avg pooling and Dense Layer without
         activation with the number of output neurons equal to num_classes.
     use_bias : bool
         If true, when on layers used bias operation.
+    init_fm : int
+        Initial number of feature maps.
     activation : tf object
         Activation on every convolution layer.
     create_model : bool
@@ -53,10 +59,10 @@ def build_VGG(
 
     in_x = InputLayer(input_shape=input_shape,name='Input')
 
-    for i in range(1, 6):
+    for i in range(1, number_of_blocks):
         # First block
         if i == 1:
-            x = repeat_n_convLayers(in_x, num_block=i, n=2, out_f=64,
+            x = repeat_n_convLayers(in_x, num_block=i, n=2, out_f=init_fm,
                                     use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
         # Second block
         elif i == 2:
@@ -64,6 +70,10 @@ def build_VGG(
                                     use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
         else:
             x = repeat_n_convLayers(x, num_block=i, n=repetition,
+                                    use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
+
+    # Last block
+    x = repeat_n_convLayers(x, out_f=x.get_shape()[-1], num_block=number_of_blocks+1, n=repetition,
                                     use_maxpoolLayer=True, bn_params=bn_params, maxpool_params=maxpool_params)
 
     if include_top:
