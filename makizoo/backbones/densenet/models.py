@@ -17,7 +17,7 @@ def DenseNet121(input_shape, classes=1000, include_top=False, create_model=False
         growth_rate=32,
         reduction=0.5,
         dropout_p_keep=0.8,
-        bm_params={}
+        bn_params={}
     )
 
 
@@ -36,7 +36,7 @@ def DenseNet161(input_shape, classes=1000, include_top=False, create_model=False
         growth_rate=24,
         reduction=0.5,
         dropout_p_keep=0.8,
-        bm_params={}
+        bn_params={}
     )
 
 
@@ -55,7 +55,7 @@ def DenseNet169(input_shape, classes=1000, include_top=False, create_model=False
         growth_rate=32,
         reduction=0.5,
         dropout_p_keep=0.8,
-        bm_params={}
+        bn_params={}
     )
 
 
@@ -74,7 +74,7 @@ def DenseNet201(input_shape, classes=1000, include_top=False, create_model=False
         growth_rate=32,
         reduction=0.5,
         dropout_p_keep=0.8,
-        bm_params={}
+        bn_params={}
     )
 
 
@@ -93,6 +93,6 @@ def DenseNet264(input_shape, classes=1000, include_top=False, create_model=False
         growth_rate=32,
         reduction=0.5,
         dropout_p_keep=0.8,
-        bm_params={}
+        bn_params={}
     )
 
