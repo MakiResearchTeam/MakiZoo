@@ -74,6 +74,8 @@ def build_DenseNet(
 
     if len(nb_layers) == 0:
         count = int((depth - 4) / 3)
+        if use_bottleneck:
+            count //= 2
         nb_layers = [count for _ in range(nb_blocks+1)]
 
     in_x = InputLayer(input_shape=input_shape, name='Input')
