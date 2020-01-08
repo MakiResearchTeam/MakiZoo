@@ -11,3 +11,5 @@ def get_maxpool_params():
         'strides': [1,2,2,1],
         'padding': 'SAME'
     }
+
+

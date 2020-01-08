@@ -196,7 +196,7 @@ def build_ResNetV1(
     return in_x, output
 
 
-def create_LittleResNetV1(
+def build_LittleResNetV1(
         input_shape,
         depth=20,
         include_top=False,
@@ -309,3 +309,4 @@ def create_LittleResNetV1(
         return Classificator(in_x,output,name=name_model)
     else:
         return in_x, output
+

@@ -1,4 +1,4 @@
-from .builder import build_ResNetV1, create_LittleResNetV1
+from .builder import build_ResNetV1, build_LittleResNetV1
 import tensorflow as tf
 
 
@@ -88,7 +88,7 @@ def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_
 
 
 def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=False):
-    return create_LittleResNetV1(
+    return build_LittleResNetV1(
         input_shape,
         depth=20,
         include_top=include_top,
@@ -102,7 +102,7 @@ def Little_ResNet20(input_shape, classes=1000, include_top=False, create_model=F
 
 
 def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=False):
-    return create_LittleResNetV1(
+    return build_LittleResNetV1(
         input_shape,
         depth=32,
         include_top=include_top,
@@ -116,7 +116,7 @@ def Little_ResNet32(input_shape, classes=1000, include_top=False, create_model=F
 
 
 def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=False):
-    return create_LittleResNetV1(
+    return build_LittleResNetV1(
         input_shape,
         depth=44,
         include_top=include_top,
@@ -130,7 +130,7 @@ def Little_ResNet44(input_shape, classes=1000, include_top=False, create_model=F
 
 
 def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=False):
-    return create_LittleResNetV1(
+    return build_LittleResNetV1(
         input_shape,
         depth=56,
         include_top=include_top,
@@ -144,7 +144,7 @@ def Little_ResNet56(input_shape, classes=1000, include_top=False, create_model=F
 
 
 def Little_ResNet110(input_shape, classes=1000, include_top=False, create_model=False):
-    return create_LittleResNetV1(
+    return build_LittleResNetV1(
         input_shape,
         depth=110,
         include_top=include_top,
