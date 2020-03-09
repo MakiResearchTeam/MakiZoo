@@ -18,6 +18,9 @@ def build_ResNetV1(
     num_classes=1000,
     factorization_first_layer=False,
     use_bias=False,
+    using_zero_padding=False,
+    using_head_bn=False,
+    head_bn_params={},
     activation=tf.nn.relu,
     block_type='with_pointwise',
     create_model=False,
@@ -115,6 +118,16 @@ def build_ResNetV1(
         x = ActivationLayer(activation=activation, name='conv1_3/activation')(x)
 
         feature_maps = output_factorization_layer
+    elif using_zero_padding:
+        x = BatchNormLayer(D=input_shape[-1], name='bn_data', **head_bn_params)(in_x)
+
+        x = ZeroPaddingLayer(padding=[[3, 3], [3, 3]], name='zero_padding2d')(x)
+        x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, stride=2, use_bias=False, activation=None, padding='VALID',
+                      name='conv0')(x)
+        x = BatchNormLayer(D=feature_maps, name='bn0')(x)
+        x = ActivationLayer(name='activation0')(x)
+
+        x = ZeroPaddingLayer(padding=[[1, 1], [1, 1]], name='zero_padding2d_1')(x)
     else:
         x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
                                     stride=2, activation=None,name='conv1/weights')(in_x)
@@ -129,10 +142,12 @@ def build_ResNetV1(
     num_block = 0
 
     for stage, repeat in enumerate(repetition):
+
+        # All stages begins at 1 more
+        stage += 1
+        
         for block in range(1, repeat + 1):
 
-            # All stages begins at 1 more
-            stage += 1
 
             # First block of the first stage is used without strides because we have maxpooling before
             if block == 1 and stage == 1:
@@ -151,14 +166,14 @@ def build_ResNetV1(
                     )
                 else:
                     x = conv_block(
-                        x=x, 
+                        x=x,
                         block_id=stage, 
                         unit_id=block, 
                         num_block=num_block,
                         use_bias=use_bias,
                         activation=activation,
                         stride=1,
-                        out_f=init_filters,
+                        out_f=feature_maps,
                         bn_params=bn_params
                     )
             elif block == 1:

@@ -291,6 +291,6 @@ def without_pointwise_CB(
     sx = ConvLayer(kw=1, kh=1, in_f=in_f, out_f=out_f, stride=stride,
                                     padding='VALID', activation=None, use_bias=use_bias, name=prefix_name + 'sc/conv')(x)
                                                                                
-    x = SumLayer(name='add' + str(num_block))([mx,sx])
+    x = SumLayer(name=num_block)([mx,sx])
 
     return x

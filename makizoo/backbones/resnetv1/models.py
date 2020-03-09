@@ -1,4 +1,5 @@
 from .builder import build_ResNetV1, build_LittleResNetV1
+from .utils import get_head_batchnorm_params
 import tensorflow as tf
 
 
@@ -27,6 +28,9 @@ def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_l
         repetition=(3, 4, 6, 3),
         include_top=include_top,
         num_classes=classes,
+        using_zero_padding=True,
+        using_head_bn=True,
+        head_bn_params=get_head_batchnorm_params(),
         factorization_first_layer=factorization_first_layer,
         use_bias=False,
         activation=tf.nn.relu,
