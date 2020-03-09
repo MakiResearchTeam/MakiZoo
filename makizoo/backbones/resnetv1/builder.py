@@ -145,9 +145,8 @@ def build_ResNetV1(
 
         # All stages begins at 1 more
         stage += 1
-        
-        for block in range(1, repeat + 1):
 
+        for block in range(1, repeat + 1):
 
             # First block of the first stage is used without strides because we have maxpooling before
             if block == 1 and stage == 1:
@@ -210,7 +209,7 @@ def build_ResNetV1(
 
     if include_top:
         x = GlobalAvgPoolLayer(name='avg_pool')(x)
-        output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits')(x)
+        output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits' if pointwise else 'fc1')(x)
 
         if create_model:
             return Classificator(in_x, output, name=name_model)
