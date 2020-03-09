@@ -123,10 +123,13 @@ def build_ResNetV1(
     num_block = 0
 
     for stage, repeat in enumerate(repetition):
-        for block in range(repeat):
+        for block in range(1, repeat + 1):
+
+            # All stages begins at 1 more
+            stage += 1
 
             # First block of the first stage is used without strides because we have maxpooling before
-            if block == 0 and stage == 0:
+            if block == 1 and stage == 1:
                 if pointwise:
                     x = conv_block(
                         x=x, 
@@ -152,7 +155,7 @@ def build_ResNetV1(
                         out_f=init_filters,
                         bn_params=bn_params
                     )
-            elif block == 0:
+            elif block == 1:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
                 x = conv_block(
                     x=x, 
@@ -256,10 +259,13 @@ def build_LittleResNetV1(
     num_activation = 3
     
     for stage in range(3):
-        for block in range(repeat):
+        for block in range(1, repeat + 1):
+
+            # All stages begins at 1 more
+            stage += 1
 
             # First block of the first stage is used without strides because we have maxpooling before
-            if block == 0 and stage == 0:
+            if block == 1 and stage == 1:
                 x = conv_block(
                     x=x, 
                     block_id=stage, 
@@ -271,7 +277,7 @@ def build_LittleResNetV1(
                     out_f=feature_maps,
                     bn_params=bm_params
                 )
-            elif block == 0:
+            elif block == 1:
                 # Every first block in new stage (zero block) we do block with stride 2 and increase number of feature maps
                 x = conv_block(
                     x=x, 
