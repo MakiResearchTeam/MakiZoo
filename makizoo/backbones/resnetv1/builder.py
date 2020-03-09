@@ -24,7 +24,8 @@ def build_ResNetV1(
     name_model='MakiClassificator',
     init_filters=64,
     min_reduction=64,
-    activation_between_blocks=True):
+    activation_between_blocks=True,
+    input_tensor=None):
     """
     Parameters
     ----------
@@ -56,6 +57,9 @@ def build_ResNetV1(
         Minimum reduction in blocks.
     activation_between_blocks : bool
         Use activation between blocks.
+    input_tensor : tf.Tensor
+        A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
+        Can be used for creation of VGGLoss.
 
     Returns
     ---------
@@ -86,7 +90,9 @@ def build_ResNetV1(
     else:
         raise Exception(f'{block_type} type is not found')
 
-    in_x = InputLayer(input_shape=input_shape,name='Input')
+    in_x = InputLayer(input_shape=input_shape, name='Input')
+    if input_tensor is not None:
+        in_x = input_tensor
 
     if factorization_first_layer:
 
@@ -208,7 +214,9 @@ def build_LittleResNetV1(
         activation=tf.nn.relu,
         create_model=False,
         name_model='MakiClassificator',
-        activation_between_blocks=True):
+        activation_between_blocks=True,
+        input_tensor=None
+):
     """
     These type of ResNet tests on CIFAR-10 and CIFAR-100
 
@@ -229,6 +237,9 @@ def build_LittleResNetV1(
         Name of model, if it will be created.
     activation_between_blocks : bool
         Use activation between blocks.
+    input_tensor : tf.Tensor
+        A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
+        Can be used for creation of VGGLoss.
 
     Returns
     ---------
@@ -244,7 +255,9 @@ def build_LittleResNetV1(
     conv_block = without_pointwise_CB
     iden_block = without_pointwise_IB
 
-    in_x = InputLayer(input_shape=input_shape,name='Input')
+    in_x = InputLayer(input_shape=input_shape, name='Input')
+    if input_tensor is not None:
+        in_x = input_tensor
 
     x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, activation=None,
                                     use_bias=use_bias, name='conv1')(in_x)
