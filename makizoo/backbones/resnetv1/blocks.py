@@ -124,7 +124,7 @@ def conv_block(
         reduction = int(in_f / 2)
 
     if out_f is None:
-        out_f = reduction * 2
+        out_f = in_f * 2
 
     mx = ConvLayer(kw=1, kh=1, in_f=in_f, out_f=reduction, stride=stride, activation=None, 
                                 use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv1/weights')(x)
