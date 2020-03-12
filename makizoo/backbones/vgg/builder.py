@@ -75,19 +75,19 @@ def build_VGG(
         # First block
         if i == 1:
             x = repeat_n_convLayers(in_x, num_block=i, n=2, out_f=init_fm, pooling_type=pooling_type,
-                                    use_maxpoolLayer=True, bn_params=bn_params, pool_params=pool_params)
+                                    bn_params=bn_params, pool_params=pool_params)
         # Second block
         elif i == 2:
             x = repeat_n_convLayers(x, num_block=i, n=2, pooling_type=pooling_type,
-                                    use_maxpoolLayer=True, bn_params=bn_params, pool_params=pool_params)
+                                    bn_params=bn_params, pool_params=pool_params)
         else:
             x = repeat_n_convLayers(x, num_block=i, n=repetition, pooling_type=pooling_type,
-                                    use_maxpoolLayer=True, bn_params=bn_params, pool_params=pool_params)
+                                    bn_params=bn_params, pool_params=pool_params)
 
     # Last block
     x = repeat_n_convLayers(x, out_f=x.get_shape()[-1], num_block=number_of_blocks,
                             n=repetition, pooling_type=pooling_type,
-                            use_maxpoolLayer=True, bn_params=bn_params, pool_params=pool_params)
+                            bn_params=bn_params, pool_params=pool_params)
 
     if include_top:
         x = FlattenLayer(name='flatten')(x)
