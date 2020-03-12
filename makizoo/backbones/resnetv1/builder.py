@@ -60,17 +60,16 @@ def build_ResNetV1(
         Minimum reduction in blocks.
     activation_between_blocks : bool
         Use activation between blocks.
-    input_tensor : tf.Tensor
+    input_tensor : mf.MakiTensor
         A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
-        Can be used for creation of VGGLoss.
 
     Returns
     ---------
-    in_x : MakiTensor
-        Input MakiTensor.
+    in_x :  mf.MakiTensor
+        Input  mf.MakiTensor.
     output : int
-        Output MakiTensor.
-    Classificator : MakiFlow.Classificator
+        Output mf.MakiTensor.
+    Classificator : mf.models.Classificator
         Constructed model
     """
 
@@ -93,8 +92,9 @@ def build_ResNetV1(
     else:
         raise Exception(f'{block_type} type is not found')
 
-    in_x = InputLayer(input_shape=input_shape, name='Input')
-    if input_tensor is not None:
+    if input_tensor is None:
+        in_x = InputLayer(input_shape=input_shape, name='Input')
+    elif input_tensor is not None:
         in_x = input_tensor
 
     if factorization_first_layer:
@@ -251,16 +251,17 @@ def build_LittleResNetV1(
         Name of model, if it will be created.
     activation_between_blocks : bool
         Use activation between blocks.
-    input_tensor : tf.Tensor
+    input_tensor : mf.MakiTensor
         A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
-        Can be used for creation of VGGLoss.
 
     Returns
     ---------
-    in_x : MakiTensor
+    in_x :  mf.MakiTensor
         Input MakiTensor.
     output : int
         Output MakiTensor.
+    Classificator : mf.models.Classificator
+        Constructed model.
     """
 
     feature_maps = 16
@@ -269,8 +270,9 @@ def build_LittleResNetV1(
     conv_block = without_pointwise_CB
     iden_block = without_pointwise_IB
 
-    in_x = InputLayer(input_shape=input_shape, name='Input')
-    if input_tensor is not None:
+    if input_tensor is None:
+        in_x = InputLayer(input_shape=input_shape, name='Input')
+    elif input_tensor is not None:
         in_x = input_tensor
 
     x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, activation=None,

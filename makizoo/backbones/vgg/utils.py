@@ -5,7 +5,7 @@ def get_batchnorm_params():
             'eps': 1e-3
     }
 
-def get_maxpool_params():
+def get_pool_params():
     return {
         'ksize': [1,2,2,1],
         'strides': [1,2,2,1],
