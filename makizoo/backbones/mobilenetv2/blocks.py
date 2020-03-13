@@ -58,8 +58,8 @@ def inverted_res_block(
     if in_f is None:
         in_f = x.get_shape()[-1]
 
-    if use_skip_connection or out_f is None:
-        out_f = in_f
+    #if use_skip_connection or out_f is None:
+    #    out_f = in_f
 
 
     pointwise_conv_filters = int(out_f*alpha)
