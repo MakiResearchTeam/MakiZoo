@@ -162,7 +162,7 @@ def build_MobileNetV2(
 
     x = ConvLayer(kh=1,
         kw=1,
-        in_f=in_new_f,
+        in_f=x.get_shape()[-1],
         out_f=last_block_filters,
         stride=1,
         padding='SAME',
