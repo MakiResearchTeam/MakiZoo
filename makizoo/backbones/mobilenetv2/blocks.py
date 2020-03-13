@@ -58,13 +58,9 @@ def inverted_res_block(
     if in_f is None:
         in_f = x.get_shape()[-1]
 
-    #if use_skip_connection or out_f is None:
-    #    out_f = in_f
-
-
     pointwise_conv_filters = int(out_f*alpha)
     pointwise_f = make_divisible(pointwise_conv_filters, 8)
-
+    
     prefix = f'expanded_conv_{block_id}/'
 
     if use_expand:
