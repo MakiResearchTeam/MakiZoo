@@ -15,6 +15,7 @@ def build_MobileNetV2(
         name_model='MakiClassificator',
         alpha=1,
         expansion=6,
+        input_tensor=None,
         bm_params={}):
     """
     Parameters
@@ -45,18 +46,21 @@ def build_MobileNetV2(
     bn_params : dict
         Parameters for BatchNormLayer. If empty all parameters will have default valued.
     create_model : bool
-        Return build classification model, otherwise return input MakiTensor and output MakiTensor.
+        Return build classification model, otherwise return input mf.MakiTensor and output mf.MakiTensor.
     name_model : str
         Name of model, if it will be created.
+    input_tensor : mf.MakiTensor
+        A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
     num_classes : int
         Number of classes that you need to classify.
+
     Returns
     ---------
-    in_x : MakiTensor
-        Input MakiTensor.
+    in_x : mf.MakiTensor
+        Input mf.MakiTensor.
     output : int
-        Output MakiTensor.
-    Classificator : MakiFlow.Classificator
+        Output mf.MakiTensor.
+    Classificator : mf.models.Classificator
         Constructed model.
     """
     if bm_params is None or len(bm_params) == 0:
@@ -64,7 +68,10 @@ def build_MobileNetV2(
 
     first_filt = make_divisible(32 * alpha, 8)
 
-    in_x = InputLayer(input_shape=input_shape, name='input')
+    if input_tensor is None:
+        in_x = InputLayer(input_shape=input_shape, name='input')
+    elif input_tensor is not None:
+        in_x = input_tensor
 
     x = ConvLayer(kw=3,
                     kh=3,
