@@ -60,7 +60,7 @@ def inverted_res_block(
 
     pointwise_conv_filters = int(out_f*alpha)
     pointwise_f = make_divisible(pointwise_conv_filters, 8)
-    
+
     prefix = f'expanded_conv_{block_id}/'
 
     if use_expand:

@@ -129,7 +129,7 @@ def build_MobileNetV2(
 
     x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=10,
                                     use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
 
     x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=11,
                                     use_bias=use_bias, activation=activation,
