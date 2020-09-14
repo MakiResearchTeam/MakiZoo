@@ -37,7 +37,7 @@ def build_ResNetV1(
     factorization_first_layer=False,
     use_bias=False,
     using_zero_padding=False,
-    using_head_bn=False,
+    stride_list=(2, 2, 2, 2, 2),
     head_bn_params={},
     activation=tf.nn.relu,
     block_type='with_pointwise',
@@ -130,7 +130,7 @@ def build_ResNetV1(
         x = ActivationLayer(activation=activation, name='conv1_2/activation')(x)
 
         x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=output_factorization_layer,
-                                    use_bias=use_bias, stride=2, activation=None, name='conv1_3/weights')(x)
+                                    use_bias=use_bias, stride=stride_list[0], activation=None, name='conv1_3/weights')(x)
 
         x = BatchNormLayer(D=output_factorization_layer, name='conv1_3/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_3/activation')(x)
@@ -140,7 +140,8 @@ def build_ResNetV1(
         x = BatchNormLayer(D=input_shape[-1], name='bn_data', **head_bn_params)(in_x)
 
         x = ZeroPaddingLayer(padding=[[3, 3], [3, 3]], name='zero_padding2d')(x)
-        x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, stride=2, use_bias=False, activation=None, padding='VALID',
+        x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1],
+                      out_f=feature_maps, stride=stride_list[0], use_bias=False, activation=None, padding='VALID',
                       name='conv0')(x)
         x = BatchNormLayer(D=feature_maps, name='bn0')(x)
         x = ActivationLayer(name='activation0')(x)
@@ -148,16 +149,17 @@ def build_ResNetV1(
         x = ZeroPaddingLayer(padding=[[1, 1], [1, 1]], name='zero_padding2d_1')(x)
     else:
         x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
-                                    stride=2, activation=None,name='conv1/weights')(in_x)
+                                    stride=stride_list[0], activation=None,name='conv1/weights')(in_x)
         
         x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='activation')(x)
     
-    x = MaxPoolLayer(ksize=[1,3,3,1], name='max_pooling2d')(x)
+    x = MaxPoolLayer(strides=[1, stride_list[1], stride_list[1], 1], ksize=[1,3,3,1], name='max_pooling2d')(x)
 
     # Build body of ResNet
     num_activation = 3
     num_block = 0
+    num_stride = 2
 
     for stage, repeat in enumerate(repetition):
 
@@ -202,9 +204,10 @@ def build_ResNetV1(
                     num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
-                    stride=2,
+                    stride=stride_list[num_stride],
                     bn_params=bn_params
                 )
+                num_stride += 1
             else:
                 x = iden_block(
                     x=x,
