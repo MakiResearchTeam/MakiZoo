@@ -23,6 +23,7 @@ from .utils import make_divisible, get_batchnorm_params
 from makiflow.layers import *
 from makiflow.models import Classificator
 
+
 def build_MobileNetV2(
         input_shape,
         include_top=False,
@@ -34,6 +35,7 @@ def build_MobileNetV2(
         alpha=1,
         expansion=6,
         input_tensor=None,
+        stride_list=(2, 2, 2, 2, 2),
         bn_params={}):
     """
     Parameters
@@ -95,7 +97,7 @@ def build_MobileNetV2(
                     kh=3,
                     in_f=input_shape[-1],
                     out_f=first_filt,
-                    stride=2,
+                    stride=stride_list[0],
                     padding='SAME',
                     activation=None,
                     use_bias=use_bias,
@@ -109,7 +111,7 @@ def build_MobileNetV2(
                                     block_id=0, use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=False, use_skip_connection=False)
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=24, alpha=alpha, stride=2, expansion=expansion,
+    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=24, alpha=alpha, stride=stride_list[1], expansion=expansion,
                                     block_id=1, use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=False)
 
@@ -117,7 +119,7 @@ def build_MobileNetV2(
                                     use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=True)
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha, stride=2,expansion=expansion,
+    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha, stride=stride_list[2],expansion=expansion,
                                     block_id=3, use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=False)
 
@@ -129,7 +131,7 @@ def build_MobileNetV2(
                                     use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=True)
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=64, alpha=alpha, stride=2, expansion=expansion,
+    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=64, alpha=alpha, stride=stride_list[3], expansion=expansion,
                                     block_id=6, use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=False)
 
@@ -157,7 +159,7 @@ def build_MobileNetV2(
                                     use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=True)
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, stride=2, expansion=expansion, block_id=13,
+    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, stride=stride_list[4], expansion=expansion, block_id=13,
                                     use_bias=use_bias, activation=activation,
                                     bn_params=bn_params, use_expand=True, use_skip_connection=False)
 
@@ -194,9 +196,9 @@ def build_MobileNetV2(
 
     if include_top:
         x = GlobalAvgPoolLayer(name='global_avg')(pred_top)
-        x = ReshapeLayer(new_shape=[batch_size,1,1,1280],name='resh')(x)
+        x = ReshapeLayer(new_shape=[1,1,1280],name='resh')(x)
         x = ConvLayer(kw=1,kh=1,in_f=1280,out_f=num_classes,name='prediction')(x)
-        output = ReshapeLayer(new_shape=[batch_size,num_classes],name='endo')(x)
+        output = ReshapeLayer(new_shape=[num_classes],name='endo')(x)
 
         if create_model:
             return Classificator(in_x, output, name_model)
