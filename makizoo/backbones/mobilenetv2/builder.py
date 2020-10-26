@@ -93,87 +93,130 @@ def build_MobileNetV2(
     elif input_tensor is not None:
         in_x = input_tensor
 
-    x = ConvLayer(kw=3,
-                    kh=3,
-                    in_f=input_shape[-1],
-                    out_f=first_filt,
-                    stride=stride_list[0],
-                    padding='SAME',
-                    activation=None,
-                    use_bias=use_bias,
-                    name='Conv/weights',
+    x = ConvLayer(
+        kw=3,
+        kh=3,
+        in_f=input_shape[-1],
+        out_f=first_filt,
+        stride=stride_list[0],
+        activation=None,
+        use_bias=use_bias,
+        name='Conv/weights',
     )(in_x)
 
     x = BatchNormLayer(D=first_filt, name='Conv/BatchNorm', **bn_params)(x)
     x = ActivationLayer(activation=activation, name='Conv_relu')(x)
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=16, alpha=alpha, expansion=1,
-                                    block_id=0, use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=False, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=16, alpha=alpha,
+        expansion=1, block_id=0,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_expand=False, use_skip_connection=False
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=24, alpha=alpha, stride=stride_list[1], expansion=expansion,
-                                    block_id=1, use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=24, alpha=alpha, stride=stride_list[1],
+        expansion=expansion, block_id=1,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_skip_connection=False
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=24, alpha=alpha, expansion=expansion, block_id=2,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=24, alpha=alpha,
+        expansion=expansion, block_id=2,
+        use_bias=use_bias, activation=activation, bn_params=bn_params,
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha, stride=stride_list[2],expansion=expansion,
-                                    block_id=3, use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=32, alpha=alpha,
+        stride=stride_list[2], expansion=expansion, block_id=3,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_skip_connection=False
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha,expansion=expansion,block_id=4,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=32, alpha=alpha,
+        expansion=expansion, block_id=4,
+        use_bias=use_bias, activation=activation, bn_params=bn_params,
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=32, alpha=alpha, expansion=expansion, block_id=5,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=32, alpha=alpha,
+        expansion=expansion, block_id=5,
+        use_bias=use_bias, activation=activation, bn_params=bn_params,
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=64, alpha=alpha, stride=stride_list[3], expansion=expansion,
-                                    block_id=6, use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=64, alpha=alpha,
+        stride=stride_list[3], expansion=expansion, block_id=6,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_skip_connection=False
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1],out_f=64, alpha=alpha, expansion=expansion, block_id=7,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=64, alpha=alpha,
+        expansion=expansion, block_id=7,
+        use_bias=use_bias, activation=activation, bn_params=bn_params,
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=64, alpha=alpha, expansion=expansion, block_id=8,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=64, alpha=alpha,
+        expansion=expansion, block_id=8,
+        use_bias=use_bias, activation=activation, bn_params=bn_params
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1],out_f=64, alpha=alpha, expansion=expansion, block_id=9,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x,out_f=64, alpha=alpha,
+        expansion=expansion, block_id=9,
+        use_bias=use_bias, activation=activation, bn_params=bn_params
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=10,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=96, alpha=alpha,
+        expansion=expansion, block_id=10,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_skip_connection=False
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=11,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=96, alpha=alpha,
+        expansion=expansion, block_id=11,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params,
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=96, alpha=alpha,expansion=expansion, block_id=12,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=96, alpha=alpha,
+        expansion=expansion, block_id=12,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, stride=stride_list[4], expansion=expansion, block_id=13,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=160, alpha=alpha, stride=stride_list[4],
+        expansion=expansion, block_id=13,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_skip_connection=False
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, expansion=expansion, block_id=14,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=160, alpha=alpha,
+        expansion=expansion, block_id=14,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=160, alpha=alpha, expansion=expansion, block_id=15,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=True)
+    x = inverted_res_block(
+        x=x, out_f=160, alpha=alpha, expansion=expansion, block_id=15,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params
+    )
 
-    x = inverted_res_block(x=x, in_f=x.get_shape()[-1], out_f=320, alpha=alpha, expansion=expansion, block_id=16,
-                                    use_bias=use_bias, activation=activation,
-                                    bn_params=bn_params, use_expand=True, use_skip_connection=False)
+    x = inverted_res_block(
+        x=x, out_f=320, alpha=alpha, expansion=expansion, block_id=16,
+        use_bias=use_bias, activation=activation,
+        bn_params=bn_params, use_skip_connection=False
+    )
 
     if alpha > 1.0:
         last_block_filters = make_divisible(1280 * alpha, 8)
