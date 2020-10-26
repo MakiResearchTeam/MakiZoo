@@ -45,8 +45,8 @@ NAME_FINAL_ADD = "{}add"
 
 def inverted_res_block(
         x,
-        expansion,
-        alpha,
+        expansion: int,
+        alpha: float,
         block_id,
         out_f=None,
         in_f=None,
@@ -63,7 +63,7 @@ def inverted_res_block(
         Input MakiTensor.
     expansion : int
         Magnification multiplier of feature maps.
-    alpha : int
+    alpha : float
         Controls the width of the network. This is known as the width multiplier in the MobileNetV2 paper.
         If alpha < 1.0, proportionally decreases the number of filters.
         If alpha > 1.0, proportionally increases the number of filters.
@@ -150,7 +150,7 @@ def inverted_res_block(
 
     x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_POINTWISE_BN.format(prefix), **bn_params)(x)
 
-    if use_skip_connection:
+    if use_skip_connection or stride == 2:
         if x.get_shape()[-1] != inputs.get_shape()[-1]:
             raise ValueError(f'Error SumLayer\nIn block {block_id} input and output f. have different size')
 
