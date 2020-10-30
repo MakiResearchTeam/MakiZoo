@@ -15,13 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import numpy as np
 import tensorflow as tf
 from .utils import make_divisible
 from makiflow.layers import (ConvLayer, BatchNormLayer,
                              ActivationLayer, DepthWiseConvLayer,
                              SumLayer)
+
 
 NAME_EXPANDED_CONV = "expanded_conv"
 ZERO_EXPANDED_CONV = NAME_EXPANDED_CONV + "/"
@@ -47,7 +46,7 @@ def inverted_res_block(
         x,
         expansion: int,
         alpha: float,
-        block_id,
+        block_id: int,
         out_f=None,
         in_f=None,
         stride=1,
@@ -74,6 +73,8 @@ def inverted_res_block(
         Number of input feature maps. By default None (shape will be getted from tensor).
     out_f : int
         Number of output feature maps. By default None (shape will same as `in_f`).
+    stride : int
+        Stride for convolution (used in depthwise convolution)
     activation : tensorflow function
         The function of activation, by default tf.nn.relu6.
     use_bias : bool

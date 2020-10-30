@@ -17,8 +17,19 @@
 
 
 from makiflow.layers import *
-from makiflow.base import MakiTensor
+from makiflow.core import MakiTensor
 import tensorflow as tf
+from .utils import get_batchnorm_params
+
+
+PREFIX_NAME_BLOCK = "block{}/unit_{}"
+PREFIX_NAME_SHORTCUT = "{}/bottleneck_v1/shortcut/{}"
+PREFIX_NAME_LAYER = "{}/bottleneck_v1/conv{}/{}"
+
+BATCH_NORM = "BatchNorm"
+ACTIV = "activ"
+WEIGHTS = "weights"
+SUM_OPERATION = '/sum_operation'
 
 
 def identity_block(
@@ -29,7 +40,7 @@ def identity_block(
         in_f=None,
         use_bias=False,
         activation=tf.nn.relu,
-        bn_params={}):
+        bn_params=None):
     """
     Parameters
     ----------
@@ -48,45 +59,51 @@ def identity_block(
     num_block : int
         Number of sum operation (used in name of layers).
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued.
+        Parameters for BatchNormLayer. If equal to None all parameters will have default valued.
 
     Returns
     ---------
     x : MakiTensor
         Output MakiTensor.
     """
+    if bn_params is None:
+        bn_params = get_batchnorm_params
 
-    prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
+    prefix_name = PREFIX_NAME_BLOCK.format(block_id, unit_id)
     if num_block is None:
-        num_block = prefix_name + '/sum_operation'
+        num_block = prefix_name + SUM_OPERATION
     else:
-        num_block = 'add_' + str(num_block)
+        num_block = str(num_block) + SUM_OPERATION
 
     if in_f is None:
         in_f = x.get_shape()[-1]
 
     reduction = int(in_f / 4)
 
-    mx = ConvLayer(kw=1, kh=1, in_f=in_f, out_f=reduction, activation=None, 
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv1/weights')(x)
-                                                                                
-    mx = BatchNormLayer(D=reduction, name=prefix_name + '/bottleneck_v1/conv1/BatchNorm', **bn_params)(mx)
-    mx = ActivationLayer(activation=activation, name=prefix_name + '/bottleneck_v1/conv1/activ')(mx)
+    mx = ConvLayer(
+        kw=1, kh=1, in_f=in_f, out_f=reduction, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 1, WEIGHTS)
+    )(x)
+    mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 1, BATCH_NORM), **bn_params)(mx)
+    mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 1, ACTIV))(mx)
 
-    mx = ConvLayer(kw=3, kh=3, in_f=reduction, out_f=reduction, activation=None,
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv2/weights')(mx)
-                                                                       
-    mx = BatchNormLayer(D=reduction, name=prefix_name + '/bottleneck_v1/conv2/BatchNorm', **bn_params)(mx)
-    mx = ActivationLayer(activation=activation, name=prefix_name + '/bottleneck_v1/conv2/activ')(mx)
+    mx = ConvLayer(
+        kw=3, kh=3, in_f=reduction, out_f=reduction, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 2, WEIGHTS)
+    )(mx)
+    mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 2, BATCH_NORM), **bn_params)(mx)
+    mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 2, ACTIV))(mx)
 
-    mx = ConvLayer(kw=1, kh=1, in_f=reduction, out_f=in_f, activation=None,
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv3/weights')(mx)
-                                                                                
-    mx = BatchNormLayer(D=in_f, name=prefix_name + '/bottleneck_v1/conv3/BatchNorm', **bn_params)(mx)
+    mx = ConvLayer(
+        kw=1, kh=1, in_f=reduction, out_f=in_f, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 3, WEIGHTS)
+    )(mx)
+    mx = BatchNormLayer(D=in_f, name=PREFIX_NAME_LAYER.format(prefix_name, 3, BATCH_NORM), **bn_params)(mx)
 
     x = SumLayer(name=num_block)([mx,x])
 
     return x
+
 
 def conv_block(
         x : MakiTensor,
@@ -99,7 +116,7 @@ def conv_block(
         stride=2,
         out_f=None,
         reduction=None,
-        bn_params={}):
+        bn_params=None):
     """
     Parameters
     ----------
@@ -120,20 +137,22 @@ def conv_block(
     num_block : int
         Number of sum operation (used in name of layers).
     bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued.
+        Parameters for BatchNormLayer. If equal to None all parameters will have default valued.
 
     Returns
     ---------
     x : MakiTensor
         Output MakiTensor.
     """
+    if bn_params is None:
+        bn_params = get_batchnorm_params
 
-    prefix_name = 'block' + str(block_id) + '/unit_' + str(unit_id)
+    prefix_name = PREFIX_NAME_BLOCK.format(block_id, unit_id)
 
     if num_block is None:
-        num_block = prefix_name + '/sum_operation'
+        num_block = prefix_name + SUM_OPERATION
     else:
-        num_block = 'add_' + str(num_block)
+        num_block = str(num_block) + SUM_OPERATION
 
     if in_f is None:
         in_f = x.get_shape()[-1]
@@ -144,27 +163,31 @@ def conv_block(
     if out_f is None:
         out_f = in_f * 2
 
-    mx = ConvLayer(kw=1, kh=1, in_f=in_f, out_f=reduction, stride=stride, activation=None, 
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv1/weights')(x)
-                                                                               
-    mx = BatchNormLayer(D=reduction, name=prefix_name + '/bottleneck_v1/conv1/BatchNorm', **bn_params)(mx)
-    mx = ActivationLayer(activation=activation, name=prefix_name + '/bottleneck_v1/conv1/activ')(mx)
+    mx = ConvLayer(
+        kw=1, kh=1, in_f=in_f, out_f=reduction, stride=stride, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 1, WEIGHTS)
+    )(x)
+    mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 1, BATCH_NORM), **bn_params)(mx)
+    mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 1, ACTIV))(mx)
 
-    mx = ConvLayer(kw=3, kh=3, in_f=reduction, out_f=reduction, activation=None,
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv2/weights')(mx)
-                                                                                
-    mx = BatchNormLayer(D=reduction, name=prefix_name + '/bottleneck_v1/conv2/BatchNorm', **bn_params)(mx)
-    mx = ActivationLayer(activation=activation, name=prefix_name + '/bottleneck_v1/conv2/activ')(mx)
+    mx = ConvLayer(
+        kw=3, kh=3, in_f=reduction, out_f=reduction, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 2, WEIGHTS)
+    )(mx)
+    mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 2, BATCH_NORM), **bn_params)(mx)
+    mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 2, ACTIV))(mx)
 
-    mx = ConvLayer(kw=1, kh=1, in_f=reduction, out_f=out_f, activation=None,
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/conv3/weights')(mx)
-                                                                                
-    mx = BatchNormLayer(D=out_f, name=prefix_name + '/bottleneck_v1/conv3/BatchNorm', **bn_params)(mx)
+    mx = ConvLayer(
+        kw=1, kh=1, in_f=reduction, out_f=out_f, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 3, WEIGHTS)
+    )(mx)
+    mx = BatchNormLayer(D=out_f, name=PREFIX_NAME_LAYER.format(prefix_name, 3, BATCH_NORM), **bn_params)(mx)
 
-    sx = ConvLayer(kw=1, kh=1, in_f=in_f, out_f=out_f, stride=stride, activation=None,
-                                use_bias=use_bias, name=prefix_name + '/bottleneck_v1/shortcut/weights')(x)
-                                                                                
-    sx = BatchNormLayer(D=out_f, name=prefix_name + '/bottleneck_v1/shortcut/BatchNorm', **bn_params)(sx)
+    sx = ConvLayer(
+        kw=1, kh=1, in_f=in_f, out_f=out_f, stride=stride, activation=None,
+        use_bias=use_bias, name=PREFIX_NAME_SHORTCUT.format(prefix_name, WEIGHTS)
+    )(x)
+    sx = BatchNormLayer(D=out_f, name=PREFIX_NAME_SHORTCUT.format(prefix_name, BATCH_NORM), **bn_params)(sx)
 
     x = SumLayer(name=num_block)([mx,sx])
 

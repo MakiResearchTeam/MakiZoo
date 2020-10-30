@@ -25,73 +25,78 @@ from makiflow.models import Classificator
 
 
 def build_MobileNetV2(
-        input_shape,
-        include_top=False,
-        num_classes=1000,
+        input_shape=None,
+        input_tensor=None,
         use_bias=False,
         activation=tf.nn.relu6,
-        create_model=False,
-        name_model='MakiClassificator',
-        alpha=1,
+        alpha=1.0,
         expansion=6,
-        input_tensor=None,
         stride_list=(2, 2, 2, 2, 2),
-        bn_params={}):
+        bn_params=None,
+        include_top=False,
+        num_classes=1000,
+        create_model=False,
+        name_model='MakiClassificator'):
     """
     Parameters
     ----------
-    x : MakiTensor
-        Input MakiTensor.
-    expansion : int
-        Magnification multiplier of feature maps.
     input_shape : List
         Input shape of neural network. Example - [32, 128, 128, 3]
-        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
-    alpha : int
+        which mean 32 - batch size, two 128 - size of picture, 3 - number of colors
+    input_tensor : mf.MakiTensor
+        A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
+    use_bias : bool
+        Use bias on layers or not
+    activation : tensorflow function
+        The function of activation, by default tf.nn.relu6
+    alpha : float
         Controls the width of the network. This is known as the width multiplier in the MobileNetV2 paper.
         If alpha < 1.0, proportionally decreases the number of filters.
         If alpha > 1.0, proportionally increases the number of filters.
-        If alpha = 1, default number of filters from the paper are used at each layer.
+        If alpha = 1, default number of filters from the paper are used at each layer
+    expansion : int
+        Magnification multiplier of feature maps.
+    stride_list : list
+        The list of strides to each layer that apply stride (with length 5),
+        By default each layer will be apply stride 2
+    bn_params : dict
+        Parameters for BatchNormLayer.
+        If equal to None then all parameters will have default valued taken from utils
     include_top : bool
         If true when at the end of the neural network added Global Avg pooling and Dense Layer without
-        activation with the number of output neurons equal to num_classes.
-    activation : tensorflow function
-        The function of activation, by default tf.nn.relu6.
-    use_bias : bool
-        Use bias on layers or not.
-    use_skip_connection : bool
-        If true, sum input and output (if they are equal).
-    use_expand : bool
-        If true, input feature maps `in_f` will be expand to `expansion` * `in_f`.
-    bn_params : dict
-        Parameters for BatchNormLayer. If empty all parameters will have default valued.
-    create_model : bool
-        Return build classification model, otherwise return input mf.MakiTensor and output mf.MakiTensor.
-    name_model : str
-        Name of model, if it will be created.
-    input_tensor : mf.MakiTensor
-        A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
+        activation with the number of output neurons equal to num_classes
     num_classes : int
-        Number of classes that you need to classify.
+        Number of classes that you need to classify
+    create_model : bool
+        Return build classification model, otherwise return input mf.MakiTensor and output mf.MakiTensor
+    name_model : str
+        Name of model, if it will be created
 
     Returns
     ---------
-    in_x : mf.MakiTensor
-        Input mf.MakiTensor.
-    output : int
-        Output mf.MakiTensor.
-    Classificator : mf.models.Classificator
+    if `create_model` == false:
+        in_x : mf.MakiTensor
+            Input mf.MakiTensor.
+        output : int
+            Output mf.MakiTensor.
+    else:
+        Classificator : mf.models.Classificator
         Constructed model.
     """
-    if bn_params is None or len(bn_params) == 0:
+    if bn_params is None:
         bn_params = get_batchnorm_params()
 
-    first_filt = make_divisible(32 * alpha, 8)
+    first_filt = make_divisible(32 * alpha)
 
-    if input_tensor is None:
+    if input_tensor is None and input_shape is not None:
         in_x = InputLayer(input_shape=input_shape, name='input')
     elif input_tensor is not None:
         in_x = input_tensor
+    else:
+        raise ValueError(
+            "Error: creation of the input tensor\n"
+            "Wrong input `input_tensor` or `input_shape`"
+        )
 
     x = ConvLayer(
         kw=3,
@@ -207,28 +212,29 @@ def build_MobileNetV2(
     )
 
     x = inverted_res_block(
-        x=x, out_f=160, alpha=alpha, expansion=expansion, block_id=15,
+        x=x, out_f=160, alpha=alpha,
+        expansion=expansion, block_id=15,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params
     )
 
     x = inverted_res_block(
-        x=x, out_f=320, alpha=alpha, expansion=expansion, block_id=16,
+        x=x, out_f=320, alpha=alpha,
+        expansion=expansion, block_id=16,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_skip_connection=False
     )
 
     if alpha > 1.0:
-        last_block_filters = make_divisible(1280 * alpha, 8)
+        last_block_filters = make_divisible(1280 * alpha)
     else:
         last_block_filters = 1280
 
-    x = ConvLayer(kh=1,
+    x = ConvLayer(
+        kh=1,
         kw=1,
         in_f=x.get_shape()[-1],
         out_f=last_block_filters,
-        stride=1,
-        padding='SAME',
         activation=None,
         use_bias=use_bias,
         name='Conv_1/weights',
@@ -239,9 +245,9 @@ def build_MobileNetV2(
 
     if include_top:
         x = GlobalAvgPoolLayer(name='global_avg')(pred_top)
-        x = ReshapeLayer(new_shape=[1,1,1280],name='resh')(x)
-        x = ConvLayer(kw=1,kh=1,in_f=1280,out_f=num_classes,name='prediction')(x)
-        output = ReshapeLayer(new_shape=[num_classes],name='endo')(x)
+        x = ReshapeLayer(new_shape=[1,1, x.get_shape()[-1]], name='resh')(x)
+        x = ConvLayer(kw=1, kh=1, in_f=x.get_shape()[-1], out_f=num_classes, name='prediction')(x)
+        output = ReshapeLayer(new_shape=[num_classes], name='endo')(x)
 
         if create_model:
             return Classificator(in_x, output, name_model)
