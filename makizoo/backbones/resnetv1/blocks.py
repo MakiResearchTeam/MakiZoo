@@ -17,7 +17,7 @@
 
 
 from makiflow.layers import *
-from makiflow.base import MakiTensor
+from makiflow.core import MakiTensor
 import tensorflow as tf
 
 
