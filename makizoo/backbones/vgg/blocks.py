@@ -25,7 +25,7 @@ from .utils import get_pool_params
 
 PREFIX = "conv{}/conv{}_"
 
-NAME_CONV = PREFIX + "{}"
+NAME_CONV = "{}{}"
 NAME_ACT = "{}activation_{}"
 NAME_POOL = "block{}_pool"
 
