@@ -26,7 +26,7 @@ def VGG16(input_shape, classes=1000, include_top=False, create_model=False):
             repetition=3,
             include_top=include_top,
             num_classes=classes,
-            use_bias=False,
+            use_bias=True,
             activation=tf.nn.relu,
             create_model=create_model,
             name_model='VGG16'
@@ -39,7 +39,7 @@ def VGG19(input_shape, classes=1000, include_top=False, create_model=False):
             repetition=4,
             include_top=include_top,
             num_classes=classes,
-            use_bias=False,
+            use_bias=True,
             activation=tf.nn.relu,
             create_model=create_model,
             name_model='VGG19'
