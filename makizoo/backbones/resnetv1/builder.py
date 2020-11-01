@@ -16,21 +16,23 @@
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from .blocks import identity_block as with_pointwise_IB
-from .blocks import conv_block as with_pointwise_CB
+from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
+                     ResNetIdentityBlock_woPointWiseV1, ResNetConvBlock_woPointWiseV1
+                     )
 
-from .blocks import without_pointwise_IB
-from .blocks import without_pointwise_CB
-
-from .utils import get_batchnorm_params
+from .utils import get_batchnorm_params, get_head_batchnorm_params
 
 from makiflow.layers import *
 from makiflow.models import Classificator
 import tensorflow as tf
 
 
+WITH_POINTWISE = "with_pointwise"
+WITHOUT_POINTWISE = "without_pointwise"
+
+
 def build_ResNetV1(
-    input_shape,
+    input_shape=None,
     repetition=(2,2,2,2),
     include_top=False,
     num_classes=1000,
@@ -38,9 +40,9 @@ def build_ResNetV1(
     use_bias=False,
     using_zero_padding=False,
     stride_list=(2, 2, 2, 2, 2),
-    head_bn_params={},
+    head_bn_params=None,
     activation=tf.nn.relu,
-    block_type='with_pointwise',
+    block_type=WITH_POINTWISE,
     create_model=False,
     name_model='MakiClassificator',
     init_filters=64,
@@ -48,6 +50,8 @@ def build_ResNetV1(
     activation_between_blocks=True,
     input_tensor=None):
     """
+    Build ResNet version 1 with certain parameters
+
     Parameters
     ----------
     input_shape : List
@@ -97,14 +101,14 @@ def build_ResNetV1(
     feature_maps = init_filters
     bn_params = get_batchnorm_params()
 
-    if block_type == 'with_pointwise':
-        conv_block = with_pointwise_CB
-        iden_block = with_pointwise_IB
+    if block_type == WITH_POINTWISE:
+        conv_block = ResNetConvBlockV1
+        iden_block = ResNetIdentityBlockV1
         output_factorization_layer = init_filters
         pointwise = True
-    elif block_type == 'without_pointwise':
-        conv_block = without_pointwise_CB
-        iden_block = without_pointwise_IB
+    elif block_type == WITHOUT_POINTWISE:
+        conv_block = ResNetConvBlock_woPointWiseV1
+        iden_block = ResNetIdentityBlock_woPointWiseV1
         output_factorization_layer = init_filters * 2
         pointwise = False
     else:
@@ -114,43 +118,52 @@ def build_ResNetV1(
         in_x = InputLayer(input_shape=input_shape, name='Input')
     elif input_tensor is not None:
         in_x = input_tensor
+        input_shape = input_shape.get_shape()
 
     if factorization_first_layer:
 
-        x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
-                                    activation=None, name='conv1_1/weights')(in_x)
-
+        x = ConvLayer(
+            kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
+            activation=None, name='conv1_1/weights'
+        )(in_x)
         x = BatchNormLayer(D=feature_maps, name='conv1_1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_1/activation')(x)
 
-        x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, use_bias=use_bias,
-                                    activation=None, name='conv1_2/weights')(x)
-
+        x = ConvLayer(
+            kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, use_bias=use_bias,
+            activation=None, name='conv1_2/weights'
+        )(x)
         x = BatchNormLayer(D=feature_maps, name='conv1_2/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_2/activation')(x)
 
-        x = ConvLayer(kw=3, kh=3, in_f=feature_maps, out_f=output_factorization_layer,
-                                    use_bias=use_bias, stride=stride_list[0], activation=None, name='conv1_3/weights')(x)
-
+        x = ConvLayer(
+            kw=3, kh=3, in_f=feature_maps, out_f=output_factorization_layer,
+            use_bias=use_bias, stride=stride_list[0], activation=None, name='conv1_3/weights'
+        )(x)
         x = BatchNormLayer(D=output_factorization_layer, name='conv1_3/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_3/activation')(x)
 
         feature_maps = output_factorization_layer
     elif using_zero_padding:
+        if head_bn_params is None:
+            head_bn_params = get_head_batchnorm_params()
+
         x = BatchNormLayer(D=input_shape[-1], name='bn_data', **head_bn_params)(in_x)
 
         x = ZeroPaddingLayer(padding=[[3, 3], [3, 3]], name='zero_padding2d')(x)
-        x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1],
-                      out_f=feature_maps, stride=stride_list[0], use_bias=False, activation=None, padding='VALID',
-                      name='conv0')(x)
+        x = ConvLayer(
+            kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, stride=stride_list[0],
+            use_bias=False, activation=None, padding='VALID',name='conv0'
+        )(x)
         x = BatchNormLayer(D=feature_maps, name='bn0')(x)
         x = ActivationLayer(name='activation0')(x)
 
         x = ZeroPaddingLayer(padding=[[1, 1], [1, 1]], name='zero_padding2d_1')(x)
     else:
-        x = ConvLayer(kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
-                                    stride=stride_list[0], activation=None,name='conv1/weights')(in_x)
-        
+        x = ConvLayer(
+            kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
+            stride=stride_list[0], activation=None,name='conv1/weights'
+        )(in_x)
         x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='activation')(x)
     
@@ -230,7 +243,10 @@ def build_ResNetV1(
 
     if include_top:
         x = GlobalAvgPoolLayer(name='avg_pool')(x)
-        output = DenseLayer(in_d=x.get_shape()[-1], out_d=num_classes, activation=None, name='logits' if pointwise else 'fc1')(x)
+        output = DenseLayer(
+            in_d=x.get_shape()[-1], out_d=num_classes,
+            activation=None, name='logits' if pointwise else 'fc1'
+        )(x)
 
         if create_model:
             return Classificator(in_x, output, name=name_model)
@@ -288,17 +304,19 @@ def build_LittleResNetV1(
     feature_maps = 16
     bm_params = get_batchnorm_params()
 
-    conv_block = without_pointwise_CB
-    iden_block = without_pointwise_IB
+    conv_block = ResNetConvBlock_woPointWiseV1
+    iden_block = ResNetIdentityBlock_woPointWiseV1
 
     if input_tensor is None:
         in_x = InputLayer(input_shape=input_shape, name='Input')
     elif input_tensor is not None:
         in_x = input_tensor
+        input_shape = input_tensor.get_shape()
 
-    x = ConvLayer(kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, activation=None,
-                                    use_bias=use_bias, name='conv1')(in_x)
-                                                                                
+    x = ConvLayer(
+        kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, activation=None,
+        use_bias=use_bias, name='conv1'
+    )(in_x)
     x = BatchNormLayer(D=feature_maps, name='bn_1', **bm_params)(x)
     x = ActivationLayer(activation=activation, name= 'activation_1')(x)
 

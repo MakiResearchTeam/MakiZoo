@@ -42,7 +42,7 @@ NAME_POINTWISE_BN = "{}project/BatchNorm"
 NAME_FINAL_ADD = "{}add"
 
 
-def inverted_res_block(
+def MobileNetV2InvertedResBlock(
         x,
         expansion: int,
         alpha: float,
@@ -92,6 +92,7 @@ def inverted_res_block(
         Output MakiTensor
 
     """
+    # Save for sum Operation
     inputs = x
 
     if in_f is None:
@@ -155,7 +156,7 @@ def inverted_res_block(
         if x.get_shape()[-1] != inputs.get_shape()[-1]:
             raise ValueError(f'Error SumLayer\nIn block {block_id} input and output f. have different size')
 
-        return SumLayer(name=NAME_FINAL_ADD.format(prefix))([inputs,x])
+        return SumLayer(name=NAME_FINAL_ADD.format(prefix))([inputs, x])
     else:
         return x
 

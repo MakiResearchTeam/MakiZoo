@@ -23,6 +23,7 @@ from .utils import get_batchnorm_params
 from makiflow.layers import *
 from makiflow.models import Classificator
 
+
 def build_DenseNet(
         input_shape,
         nb_layers=[6,12,24,16],

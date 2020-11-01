@@ -21,6 +21,7 @@ import tensorflow as tf
 
 from makiflow.layers import *
 
+
 def transition_layer(
         x,
         dropout_p_keep,

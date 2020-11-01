@@ -17,7 +17,7 @@
 
 
 import tensorflow as tf
-from .blocks import inverted_res_block
+from .blocks import MobileNetV2InvertedResBlock
 from .utils import make_divisible, get_batchnorm_params
 
 from makiflow.layers import *
@@ -112,113 +112,113 @@ def build_MobileNetV2(
     x = BatchNormLayer(D=first_filt, name='Conv/BatchNorm', **bn_params)(x)
     x = ActivationLayer(activation=activation, name='Conv_relu')(x)
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=16, alpha=alpha,
         expansion=1, block_id=0,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_expand=False, use_skip_connection=False
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=24, alpha=alpha, stride=stride_list[1],
         expansion=expansion, block_id=1,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_skip_connection=False
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=24, alpha=alpha,
         expansion=expansion, block_id=2,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=32, alpha=alpha,
         stride=stride_list[2], expansion=expansion, block_id=3,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_skip_connection=False
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=32, alpha=alpha,
         expansion=expansion, block_id=4,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=32, alpha=alpha,
         expansion=expansion, block_id=5,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=64, alpha=alpha,
         stride=stride_list[3], expansion=expansion, block_id=6,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_skip_connection=False
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=64, alpha=alpha,
         expansion=expansion, block_id=7,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=64, alpha=alpha,
         expansion=expansion, block_id=8,
         use_bias=use_bias, activation=activation, bn_params=bn_params
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x,out_f=64, alpha=alpha,
         expansion=expansion, block_id=9,
         use_bias=use_bias, activation=activation, bn_params=bn_params
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=96, alpha=alpha,
         expansion=expansion, block_id=10,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_skip_connection=False
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=96, alpha=alpha,
         expansion=expansion, block_id=11,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params,
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=96, alpha=alpha,
         expansion=expansion, block_id=12,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=160, alpha=alpha, stride=stride_list[4],
         expansion=expansion, block_id=13,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params, use_skip_connection=False
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=160, alpha=alpha,
         expansion=expansion, block_id=14,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=160, alpha=alpha,
         expansion=expansion, block_id=15,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params
     )
 
-    x = inverted_res_block(
+    x = MobileNetV2InvertedResBlock(
         x=x, out_f=320, alpha=alpha,
         expansion=expansion, block_id=16,
         use_bias=use_bias, activation=activation,
