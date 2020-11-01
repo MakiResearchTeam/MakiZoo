@@ -152,7 +152,7 @@ def MobileNetV2InvertedResBlock(
 
     x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_POINTWISE_BN.format(prefix), **bn_params)(x)
 
-    if use_skip_connection or stride == 2:
+    if use_skip_connection:
         if x.get_shape()[-1] != inputs.get_shape()[-1]:
             raise ValueError(f'Error SumLayer\nIn block {block_id} input and output f. have different size')
 
