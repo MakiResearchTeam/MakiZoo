@@ -105,7 +105,7 @@ def build_VGG(
         )
 
     for i in range(1, number_of_blocks):
-        if is_use_pool_list[i]:
+        if is_use_pool_list[i-1]:
             type_pool = pooling_type
         else:
             type_pool = NONE

@@ -19,6 +19,10 @@
 import tensorflow as tf
 from .builder import build_VGG
 
+# Preprocess:
+#         B        G        R
+# Image - [103.939, 116.779, 123.68]
+
 
 def VGG16(input_shape, classes=1000, include_top=False, create_model=False):
     return build_VGG(
