@@ -20,7 +20,7 @@ from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
                      ResNetIdentityBlock_woPointWiseV1, ResNetConvBlock_woPointWiseV1
                      )
 
-from .utils import get_batchnorm_params, get_head_batchnorm_params
+from .utils import get_batchnorm_params, get_head_batchnorm_params, get_batchnorm_params_resnet34
 
 from makiflow.layers import *
 from makiflow.models import Classificator
@@ -99,7 +99,10 @@ def build_ResNetV1(
         raise TypeError('repetition should be list of size 4')
 
     feature_maps = init_filters
-    bn_params = get_batchnorm_params()
+    if using_zero_padding:
+        bn_params = get_batchnorm_params_resnet34()
+    else:
+        bn_params = get_batchnorm_params()
 
     if block_type == WITH_POINTWISE:
         conv_block = ResNetConvBlockV1
@@ -155,7 +158,7 @@ def build_ResNetV1(
             kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, stride=stride_list[0],
             use_bias=False, activation=None, padding='VALID',name='conv0'
         )(x)
-        x = BatchNormLayer(D=feature_maps, name='bn0')(x)
+        x = BatchNormLayer(D=feature_maps, name='bn0', **bn_params)(x)
         x = ActivationLayer(name='activation0')(x)
 
         x = ZeroPaddingLayer(padding=[[1, 1], [1, 1]], name='zero_padding2d_1')(x)
@@ -166,8 +169,16 @@ def build_ResNetV1(
         )(in_x)
         x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='activation')(x)
-    
-    x = MaxPoolLayer(strides=[1, stride_list[1], stride_list[1], 1], ksize=[1,3,3,1], name='max_pooling2d')(x)
+
+    if using_zero_padding:
+        x = MaxPoolLayer(
+            strides=[1, stride_list[1], stride_list[1], 1],
+            ksize=[1,3,3,1],
+            padding='VALID',
+            name='max_pooling2d'
+        )(x)
+    else:
+        x = MaxPoolLayer(strides=[1, stride_list[1], stride_list[1], 1], ksize=[1, 3, 3, 1], name='max_pooling2d')(x)
 
     # Build body of ResNet
     num_activation = 3

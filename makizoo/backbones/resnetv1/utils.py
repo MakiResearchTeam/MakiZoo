@@ -23,6 +23,13 @@ def get_batchnorm_params():
     }
 
 
+def get_batchnorm_params_resnet34():
+    return {
+            'decay': 0.99,
+            'eps': 2e-5
+    }
+
+
 def get_head_batchnorm_params():
     return {
             'use_gamma': False,
