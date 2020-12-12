@@ -16,19 +16,13 @@
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
-
 from .models import (ResNet18, ResNet34, ResNet50,
                      ResNet101, ResNet152, Little_ResNet20,
                      Little_ResNet32, Little_ResNet44,
-                     Little_ResNet56, Little_ResNet110
-                     )
+                     Little_ResNet56, Little_ResNet110)
 
 from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
-                     ResNetConvBlock_woPointWiseV1, ResNetIdentityBlock_woPointWiseV1
-                     )
+                     ResNetConvBlock_woPointWiseV1, ResNetIdentityBlock_woPointWiseV1)
 
 from .builder import build_ResNetV1, build_LittleResNetV1
 from .utils import get_batchnorm_params
-
-del absolute_import

@@ -17,18 +17,14 @@
 
 
 from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
-                     ResNetIdentityBlock_woPointWiseV1, ResNetConvBlock_woPointWiseV1
-                     )
+                     ResNetIdentityBlock_woPointWiseV1, ResNetConvBlock_woPointWiseV1)
 
-from .utils import get_batchnorm_params, get_head_batchnorm_params, get_batchnorm_params_resnet34
+from .utils import (get_batchnorm_params, get_head_batchnorm_params,
+                    get_batchnorm_params_resnet34, WITH_POINTWISE, WITHOUT_POINTWISE)
 
 from makiflow.layers import *
 from makiflow.models import Classificator
 import tensorflow as tf
-
-
-WITH_POINTWISE = "with_pointwise"
-WITHOUT_POINTWISE = "without_pointwise"
 
 
 def build_ResNetV1(
@@ -287,7 +283,7 @@ def build_LittleResNetV1(
     input_shape : List
         Input shape of neural network. Example - [32, 128, 128, 3]
         which mean 32 - batch size, two 128 - size of picture, 3 - number of colors.
-    depth : list
+    depth : int
         Maximum number of layers.
     use_bias : bool
         If true, when on layers used bias operation.

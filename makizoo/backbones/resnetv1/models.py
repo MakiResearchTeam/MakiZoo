@@ -17,7 +17,7 @@
 
 
 from .builder import build_ResNetV1, build_LittleResNetV1
-from .utils import get_head_batchnorm_params
+from .utils import get_head_batchnorm_params, WITHOUT_POINTWISE, WITH_POINTWISE
 import tensorflow as tf
 
 
@@ -34,7 +34,7 @@ def ResNet18(input_shape, classes=1000, include_top=False, create_model=False):
         factorization_first_layer=False,
         use_bias=False,
         activation=tf.nn.relu,
-        block_type='without_pointwise',
+        block_type=WITHOUT_POINTWISE,
         create_model=create_model,
         name_model='ResNet18'
     )
@@ -51,7 +51,7 @@ def ResNet34(input_shape, classes=1000, include_top=False, factorization_first_l
         factorization_first_layer=factorization_first_layer,
         use_bias=False,
         activation=tf.nn.relu,
-        block_type='without_pointwise',
+        block_type=WITHOUT_POINTWISE,
         create_model=create_model,
         name_model='ResNet34'
     )
@@ -66,7 +66,7 @@ def ResNet50(input_shape, classes=1000, include_top=False, factorization_first_l
         factorization_first_layer=factorization_first_layer,
         use_bias=False,
         activation=tf.nn.relu,
-        block_type='with_pointwise',
+        block_type=WITH_POINTWISE,
         create_model=create_model,
         name_model='ResNet50',
     )
@@ -81,7 +81,7 @@ def ResNet101(input_shape, classes=1000, include_top=False, factorization_first_
         factorization_first_layer=factorization_first_layer,
         use_bias=False,
         activation=tf.nn.relu,
-        block_type='with_pointwise',
+        block_type=WITH_POINTWISE,
         create_model=create_model,
         name_model='ResNet101'
     )
@@ -96,7 +96,7 @@ def ResNet152(input_shape, classes=1000, include_top=False, factorization_first_
         factorization_first_layer=factorization_first_layer,
         use_bias=False,
         activation=tf.nn.relu,
-        block_type='with_pointwise',
+        block_type=WITH_POINTWISE,
         create_model=create_model,
         name_model='ResNet152'
     )
@@ -176,3 +176,4 @@ def Little_ResNet110(input_shape, classes=1000, include_top=False, create_model=
         name_model='Little_ResNet110',
         activation_between_blocks=True
     )
+
