@@ -17,9 +17,8 @@
 
 import tensorflow as tf
 from .utils import make_divisible
-from makiflow.layers import (ConvLayer, BatchNormLayer,
-                             ActivationLayer, DepthWiseConvLayer,
-                             SumLayer)
+from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
 
 
 NAME_EXPANDED_CONV = "expanded_conv"
@@ -54,6 +53,7 @@ def MobileNetV2InvertedResBlock(
         use_expand=True,
         activation=tf.nn.relu6,
         use_bias=False,
+        kernel_initializer=InitConvKernel.HE,
         bn_params={}):
     """
     Parameters
@@ -83,6 +83,10 @@ def MobileNetV2InvertedResBlock(
         If true, sum input and output (if they are equal).
     use_expand : bool
         If true, input feature maps `in_f` will be expand to `expansion` * `in_f`.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     bn_params : dict
         Parameters for BatchNormLayer. If empty all parameters will have default valued.
 
@@ -114,6 +118,7 @@ def MobileNetV2InvertedResBlock(
             name=NAME_EXPAND.format(prefix),
             use_bias=use_bias,
             activation=None,
+            kernel_initializer=kernel_initializer
         )(x)
 
         x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_EXPAND_BN.format(prefix), **bn_params)(x)
@@ -134,6 +139,7 @@ def MobileNetV2InvertedResBlock(
         stride=stride,
         use_bias=use_bias,
         name=NAME_DEPTHWISE.format(prefix),
+        kernel_initializer=kernel_initializer
     )(x)
 
     x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_DEPTHWISE_BN.format(prefix), **bn_params)(x)
@@ -147,7 +153,8 @@ def MobileNetV2InvertedResBlock(
         out_f=pointwise_f,
         use_bias=use_bias,
         activation=None,
-        name=NAME_POINTWISE.format(prefix)
+        name=NAME_POINTWISE.format(prefix),
+        kernel_initializer=kernel_initializer
     )(x)
 
     x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_POINTWISE_BN.format(prefix), **bn_params)(x)

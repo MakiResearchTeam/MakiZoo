@@ -17,6 +17,7 @@
 
 
 from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
 from makiflow.models import Classificator
 import tensorflow as tf
 
@@ -37,6 +38,7 @@ def build_VGG(
     num_classes=1000,
     create_model=False,
     pool_params=None,
+    kernel_initializer=InitConvKernel.HE,
     name_model='MakiClassificator'):
     """
     Parameters
@@ -74,6 +76,10 @@ def build_VGG(
         Return build classification model, otherwise return input mf.MakiTensor and output mf.MakiTensor
     pool_params : dict
         Parameters for pool operation, by default equal to None, i. e. parameters will be taken from utilss
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     name_model : str
         Name of model, if it will be created
 
@@ -100,7 +106,6 @@ def build_VGG(
         in_x = input_tensor
     else:
         raise ValueError(
-            "Error: creation of the input tensor\n"
             "Wrong input `input_tensor` or `input_shape`"
         )
 
@@ -116,7 +121,7 @@ def build_VGG(
                 x=in_x, num_block=str(i), n=2,
                 out_f=init_fm, pooling_type=type_pool,
                 use_bias=use_bias, activation=activation,
-                pool_params=pool_params
+                kernel_initializer=kernel_initializer, pool_params=pool_params
             )
         # Second block
         elif i == 2:
@@ -124,14 +129,14 @@ def build_VGG(
                 x=x, num_block=str(i), n=2,
                 pooling_type=type_pool,
                 use_bias=use_bias, activation=activation,
-                pool_params=pool_params
+                kernel_initializer=kernel_initializer, pool_params=pool_params
             )
         else:
             x = VGGBlock(
                 x=x, num_block=str(i), n=repetition,
                 pooling_type=type_pool,
                 use_bias=use_bias, activation=activation,
-                pool_params=pool_params
+                kernel_initializer=kernel_initializer, pool_params=pool_params
             )
 
     # Last block
@@ -139,7 +144,7 @@ def build_VGG(
         x, out_f=x.get_shape()[-1], num_block=str(number_of_blocks),
         n=repetition, pooling_type=pooling_type if is_use_pool_list[-1] else NONE,
         use_bias=use_bias, activation=activation,
-        pool_params=pool_params
+        kernel_initializer=kernel_initializer, pool_params=pool_params
     )
 
     if include_top:

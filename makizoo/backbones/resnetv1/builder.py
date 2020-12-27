@@ -23,6 +23,7 @@ from .utils import (get_batchnorm_params, get_head_batchnorm_params,
                     get_batchnorm_params_resnet34, WITH_POINTWISE, WITHOUT_POINTWISE)
 
 from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
 from makiflow.models import Classificator
 import tensorflow as tf
 
@@ -44,6 +45,7 @@ def build_ResNetV1(
     init_filters=64,
     min_reduction=64,
     activation_between_blocks=True,
+    kernel_initializer=InitConvKernel.HE,
     input_tensor=None):
     """
     Build ResNet version 1 with certain parameters
@@ -78,6 +80,10 @@ def build_ResNetV1(
         Minimum reduction in blocks.
     activation_between_blocks : bool
         Use activation between blocks.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     input_tensor : mf.MakiTensor
         A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
 
@@ -123,21 +129,24 @@ def build_ResNetV1(
 
         x = ConvLayer(
             kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
-            activation=None, name='conv1_1/weights'
+            activation=None, name='conv1_1/weights',
+            kernel_initializer=kernel_initializer
         )(in_x)
         x = BatchNormLayer(D=feature_maps, name='conv1_1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_1/activation')(x)
 
         x = ConvLayer(
             kw=3, kh=3, in_f=feature_maps, out_f=feature_maps, use_bias=use_bias,
-            activation=None, name='conv1_2/weights'
+            activation=None, name='conv1_2/weights',
+            kernel_initializer=kernel_initializer
         )(x)
         x = BatchNormLayer(D=feature_maps, name='conv1_2/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_2/activation')(x)
 
         x = ConvLayer(
             kw=3, kh=3, in_f=feature_maps, out_f=output_factorization_layer,
-            use_bias=use_bias, stride=stride_list[0], activation=None, name='conv1_3/weights'
+            use_bias=use_bias, stride=stride_list[0], activation=None, name='conv1_3/weights',
+            kernel_initializer=kernel_initializer
         )(x)
         x = BatchNormLayer(D=output_factorization_layer, name='conv1_3/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='conv1_3/activation')(x)
@@ -152,7 +161,8 @@ def build_ResNetV1(
         x = ZeroPaddingLayer(padding=[[3, 3], [3, 3]], name='zero_padding2d')(x)
         x = ConvLayer(
             kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, stride=stride_list[0],
-            use_bias=False, activation=None, padding='VALID',name='conv0'
+            use_bias=False, activation=None, padding='VALID',name='conv0',
+            kernel_initializer=kernel_initializer
         )(x)
         x = BatchNormLayer(D=feature_maps, name='bn0', **bn_params)(x)
         x = ActivationLayer(name='activation0')(x)
@@ -161,7 +171,8 @@ def build_ResNetV1(
     else:
         x = ConvLayer(
             kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
-            stride=stride_list[0], activation=None,name='conv1/weights'
+            stride=stride_list[0], activation=None,name='conv1/weights',
+            kernel_initializer=kernel_initializer
         )(in_x)
         x = BatchNormLayer(D=feature_maps, name='conv1/BatchNorm', **bn_params)(x)
         x = ActivationLayer(activation=activation, name='activation')(x)
@@ -201,6 +212,7 @@ def build_ResNetV1(
                         stride=1,
                         out_f=256,
                         reduction=min_reduction,
+                        kernel_initializer=kernel_initializer,
                         bn_params=bn_params
                     )
                 else:
@@ -213,6 +225,7 @@ def build_ResNetV1(
                         activation=activation,
                         stride=1,
                         out_f=feature_maps,
+                        kernel_initializer=kernel_initializer,
                         bn_params=bn_params
                     )
             elif block == 1:
@@ -225,6 +238,7 @@ def build_ResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     stride=stride_list[num_stride],
+                    kernel_initializer=kernel_initializer,
                     bn_params=bn_params
                 )
                 num_stride += 1
@@ -236,6 +250,7 @@ def build_ResNetV1(
                     num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
+                    kernel_initializer=kernel_initializer,
                     bn_params=bn_params
                 )
             num_block += 1
@@ -273,8 +288,8 @@ def build_LittleResNetV1(
         create_model=False,
         name_model='MakiClassificator',
         activation_between_blocks=True,
-        input_tensor=None
-):
+        kernel_initializer=InitConvKernel.HE,
+        input_tensor=None):
     """
     These type of ResNet tests on CIFAR-10 and CIFAR-100
 
@@ -295,6 +310,10 @@ def build_LittleResNetV1(
         Name of model, if it will be created.
     activation_between_blocks : bool
         Use activation between blocks.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     input_tensor : mf.MakiTensor
         A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
 
@@ -322,7 +341,8 @@ def build_LittleResNetV1(
 
     x = ConvLayer(
         kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, activation=None,
-        use_bias=use_bias, name='conv1'
+        use_bias=use_bias, name='conv1',
+        kernel_initializer=kernel_initializer
     )(in_x)
     x = BatchNormLayer(D=feature_maps, name='bn_1', **bm_params)(x)
     x = ActivationLayer(activation=activation, name= 'activation_1')(x)
@@ -350,6 +370,7 @@ def build_LittleResNetV1(
                     activation=activation,
                     stride=1,
                     out_f=feature_maps,
+                    kernel_initializer=kernel_initializer,
                     bn_params=bm_params
                 )
             elif block == 1:
@@ -362,6 +383,7 @@ def build_LittleResNetV1(
                     use_bias=use_bias,
                     activation=activation,
                     stride=2,
+                    kernel_initializer=kernel_initializer,
                     bn_params=bm_params
                 )
             else:
@@ -372,6 +394,7 @@ def build_LittleResNetV1(
                     num_block=num_block,
                     use_bias=use_bias,
                     activation=activation,
+                    kernel_initializer=kernel_initializer,
                     bn_params=bm_params
                 )
 

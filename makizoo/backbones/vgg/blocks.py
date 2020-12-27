@@ -17,6 +17,8 @@
 
 
 from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
+
 from makiflow.core import MakiTensor
 import tensorflow as tf
 
@@ -35,15 +37,16 @@ NONE = 'none'
 
 
 def VGGBlock(
-    x: MakiTensor,
-    num_block: str,
-    n: int,
-    in_f=None,
-    out_f=None,
-    use_bias=False,
-    activation=tf.nn.relu,
-    pooling_type='max_pool',
-    pool_params=None):
+        x: MakiTensor,
+        num_block: str,
+        n: int,
+        in_f=None,
+        out_f=None,
+        use_bias=False,
+        activation=tf.nn.relu,
+        pooling_type='max_pool',
+        kernel_initializer=InitConvKernel.HE,
+        pool_params=None):
     """
     VGGBlock is consist of certain number (in our case `n`) conv + activation layers,
     First layer scale `in_f` upto `out_f`
@@ -70,6 +73,10 @@ def VGGBlock(
         'max_pool' - for max pooling.
         'avg_pool' - for average pooling.
         'none' or any other strings - the operation pooling will not be used.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     pool_params : dict
         Parameters for pool layer. If equal to None then all parameters will have default valued.
         Default parameters are:
@@ -99,14 +106,16 @@ def VGGBlock(
 
     x = ConvLayer(
         kw=3,kh=3,in_f=in_f,out_f=out_f,use_bias=use_bias,
-        activation=None,name=NAME_CONV.format(prefix_name, str(1))
+        activation=None,name=NAME_CONV.format(prefix_name, str(1)),
+        kernel_initializer=kernel_initializer
     )(x)
     x = ActivationLayer(activation=activation, name=NAME_ACT.format(prefix_name, str(1)))(x)
 
     for i in range(2, n+1):
         x = ConvLayer(
             kw=3,kh=3,in_f=out_f,out_f=out_f,use_bias=use_bias,
-            activation=None,name=NAME_CONV.format(prefix_name, str(i))
+            activation=None,name=NAME_CONV.format(prefix_name, str(i)),
+            kernel_initializer=kernel_initializer
         )(x)
         x = ActivationLayer(activation=activation, name=NAME_ACT.format(prefix_name, str(i)))(x)
 

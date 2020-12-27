@@ -21,6 +21,7 @@ from .blocks import MobileNetV2InvertedResBlock
 from .utils import make_divisible, get_batchnorm_params
 
 from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
 from makiflow.models import Classificator
 
 
@@ -36,6 +37,7 @@ def build_MobileNetV2(
         include_top=False,
         num_classes=1000,
         create_model=False,
+        kernel_initializer=InitConvKernel.HE,
         name_model='MakiClassificator'):
     """
     Parameters
@@ -69,6 +71,10 @@ def build_MobileNetV2(
         Number of classes that you need to classify
     create_model : bool
         Return build classification model, otherwise return input mf.MakiTensor and output mf.MakiTensor
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     name_model : str
         Name of model, if it will be created
 
@@ -82,6 +88,7 @@ def build_MobileNetV2(
     else:
         Classificator : mf.models.Classificator
         Constructed model.
+
     """
     if bn_params is None:
         bn_params = get_batchnorm_params()
@@ -94,7 +101,6 @@ def build_MobileNetV2(
         in_x = input_tensor
     else:
         raise ValueError(
-            "Error: creation of the input tensor\n"
             "Wrong input `input_tensor` or `input_shape`"
         )
 
@@ -107,6 +113,7 @@ def build_MobileNetV2(
         activation=None,
         use_bias=use_bias,
         name='Conv/weights',
+        kernel_initializer=kernel_initializer,
     )(in_x)
 
     x = BatchNormLayer(D=first_filt, name='Conv/BatchNorm', **bn_params)(x)
@@ -116,71 +123,82 @@ def build_MobileNetV2(
         x=x, out_f=16, alpha=alpha,
         expansion=1, block_id=0,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_expand=False, use_skip_connection=False
+        bn_params=bn_params, use_expand=False, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=24, alpha=alpha, stride=stride_list[1],
         expansion=expansion, block_id=1,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_skip_connection=False
+        bn_params=bn_params, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=24, alpha=alpha,
         expansion=expansion, block_id=2,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=32, alpha=alpha,
         stride=stride_list[2], expansion=expansion, block_id=3,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_skip_connection=False
+        bn_params=bn_params, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=32, alpha=alpha,
         expansion=expansion, block_id=4,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=32, alpha=alpha,
         expansion=expansion, block_id=5,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=64, alpha=alpha,
         stride=stride_list[3], expansion=expansion, block_id=6,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_skip_connection=False
+        bn_params=bn_params, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=64, alpha=alpha,
         expansion=expansion, block_id=7,
         use_bias=use_bias, activation=activation, bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=64, alpha=alpha,
         expansion=expansion, block_id=8,
-        use_bias=use_bias, activation=activation, bn_params=bn_params
+        use_bias=use_bias, activation=activation, bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x,out_f=64, alpha=alpha,
         expansion=expansion, block_id=9,
-        use_bias=use_bias, activation=activation, bn_params=bn_params
+        use_bias=use_bias, activation=activation, bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=96, alpha=alpha,
         expansion=expansion, block_id=10,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_skip_connection=False
+        bn_params=bn_params, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
@@ -188,41 +206,47 @@ def build_MobileNetV2(
         expansion=expansion, block_id=11,
         use_bias=use_bias, activation=activation,
         bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=96, alpha=alpha,
         expansion=expansion, block_id=12,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params
+        bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=160, alpha=alpha, stride=stride_list[4],
         expansion=expansion, block_id=13,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_skip_connection=False
+        bn_params=bn_params, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=160, alpha=alpha,
         expansion=expansion, block_id=14,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params
+        bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=160, alpha=alpha,
         expansion=expansion, block_id=15,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params
+        bn_params=bn_params,
+        kernel_initializer=kernel_initializer
     )
 
     x = MobileNetV2InvertedResBlock(
         x=x, out_f=320, alpha=alpha,
         expansion=expansion, block_id=16,
         use_bias=use_bias, activation=activation,
-        bn_params=bn_params, use_skip_connection=False
+        bn_params=bn_params, use_skip_connection=False,
+        kernel_initializer=kernel_initializer
     )
 
     if alpha > 1.0:
@@ -238,6 +262,7 @@ def build_MobileNetV2(
         activation=None,
         use_bias=use_bias,
         name='Conv_1/weights',
+        kernel_initializer=kernel_initializer
     )(x)
 
     x = BatchNormLayer(D=last_block_filters, name='Conv_1/BatchNorm', **bn_params)(x)

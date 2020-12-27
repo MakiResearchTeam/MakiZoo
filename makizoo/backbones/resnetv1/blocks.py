@@ -17,6 +17,7 @@
 
 
 from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
 from makiflow.core import MakiTensor
 import tensorflow as tf
 from .utils import get_batchnorm_params
@@ -49,6 +50,7 @@ def ResNetIdentityBlockV1(
         in_f=None,
         activation=tf.nn.relu,
         use_bias=False,
+        kernel_initializer=InitConvKernel.HE,
         bn_params=None):
     """
     Create ResNet block with skip connection,
@@ -70,6 +72,10 @@ def ResNetIdentityBlockV1(
         The function of activation, by default tf.nn.relu.
     use_bias : bool
         Use bias on layers or not.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     bn_params : dict
         Parameters for BatchNormLayer. If equal to None all parameters will have default valued.
 
@@ -91,21 +97,24 @@ def ResNetIdentityBlockV1(
 
     mx = ConvLayer(
         kw=1, kh=1, in_f=in_f, out_f=reduction, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 1, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 1, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(x)
     mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 1, BATCH_NORM), **bn_params)(mx)
     mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 1, ACTIV))(mx)
 
     mx = ConvLayer(
         kw=3, kh=3, in_f=reduction, out_f=reduction, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 2, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 2, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(mx)
     mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 2, BATCH_NORM), **bn_params)(mx)
     mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 2, ACTIV))(mx)
 
     mx = ConvLayer(
         kw=1, kh=1, in_f=reduction, out_f=in_f, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 3, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 3, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(mx)
     mx = BatchNormLayer(D=in_f, name=PREFIX_NAME_LAYER.format(prefix_name, 3, BATCH_NORM), **bn_params)(mx)
 
@@ -125,6 +134,7 @@ def ResNetConvBlockV1(
         out_f=None,
         in_f=None,
         reduction=None,
+        kernel_initializer=InitConvKernel.HE,
         bn_params=None):
     """
     Create ResNet block with skip connection using certain `stride`,
@@ -155,6 +165,10 @@ def ResNetConvBlockV1(
     reduction : int
         The number of feature maps to which you want to increase/decrease,
         By default decrease input feature maps by 2
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     bn_params : dict
         Parameters for BatchNormLayer. If equal to None all parameters will have default valued.
 
@@ -180,7 +194,8 @@ def ResNetConvBlockV1(
     # Conv(1x1) -> BN -> Activ
     mx = ConvLayer(
         kw=1, kh=1, in_f=in_f, out_f=reduction, stride=stride, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 1, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 1, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(x)
     mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 1, BATCH_NORM), **bn_params)(mx)
     mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 1, ACTIV))(mx)
@@ -188,7 +203,8 @@ def ResNetConvBlockV1(
     # Conv(3x3) -> BN -> Activ
     mx = ConvLayer(
         kw=3, kh=3, in_f=reduction, out_f=reduction, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 2, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 2, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(mx)
     mx = BatchNormLayer(D=reduction, name=PREFIX_NAME_LAYER.format(prefix_name, 2, BATCH_NORM), **bn_params)(mx)
     mx = ActivationLayer(activation=activation, name=PREFIX_NAME_LAYER.format(prefix_name, 2, ACTIV))(mx)
@@ -196,14 +212,16 @@ def ResNetConvBlockV1(
     # Conv(1x1) -> BN
     mx = ConvLayer(
         kw=1, kh=1, in_f=reduction, out_f=out_f, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 3, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_LAYER.format(prefix_name, 3, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(mx)
     mx = BatchNormLayer(D=out_f, name=PREFIX_NAME_LAYER.format(prefix_name, 3, BATCH_NORM), **bn_params)(mx)
 
     # Skip branch
     sx = ConvLayer(
         kw=1, kh=1, in_f=in_f, out_f=out_f, stride=stride, activation=None,
-        use_bias=use_bias, name=PREFIX_NAME_SHORTCUT.format(prefix_name, WEIGHTS)
+        use_bias=use_bias, name=PREFIX_NAME_SHORTCUT.format(prefix_name, WEIGHTS),
+        kernel_initializer=kernel_initializer
     )(x)
     sx = BatchNormLayer(D=out_f, name=PREFIX_NAME_SHORTCUT.format(prefix_name, BATCH_NORM), **bn_params)(sx)
 
@@ -220,6 +238,7 @@ def ResNetIdentityBlock_woPointWiseV1(
         in_f=None,
         use_bias=False,
         activation=tf.nn.relu,
+        kernel_initializer=InitConvKernel.HE,
         bn_params=None):
     """
     Create ResNet block with skip connection and without pointwise operation in block,
@@ -243,6 +262,10 @@ def ResNetIdentityBlock_woPointWiseV1(
         Unit of block (used in name of layers).
     num_block : int
         Number of sum operation (used in name of layers).
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     bn_params : dict
         Parameters for BatchNormLayer. If equal to None all parameters will have default valued.
 
@@ -266,7 +289,8 @@ def ResNetIdentityBlock_woPointWiseV1(
     mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=ZERO_PADDING.format(prefix_name, 1))(mx)
     mx = ConvLayer(
         kw=3, kh=3, in_f=in_f, out_f=in_f, activation=None,
-        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 1)
+        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 1),
+        kernel_initializer=kernel_initializer
     )(mx)
 
     # BN -> ACT -> ZERO_PADDING -> CONV, second block
@@ -275,7 +299,8 @@ def ResNetIdentityBlock_woPointWiseV1(
     mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=ZERO_PADDING.format(prefix_name, 2))(mx)
     mx = ConvLayer(
         kw=3, kh=3, in_f=in_f, out_f=in_f, activation=None,
-        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 2)
+        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 2),
+        kernel_initializer=kernel_initializer
     )(mx)
 
     x = SumLayer(name=prefix_name + SUM_OPERATION + str(num_block))([mx,x])
@@ -293,6 +318,7 @@ def ResNetConvBlock_woPointWiseV1(
         stride=2,
         in_f=None,
         out_f=None,
+        kernel_initializer=InitConvKernel.HE,
         bn_params=None):
     """
     Create ResNet block with skip connection using certain `stride`
@@ -321,6 +347,10 @@ def ResNetConvBlock_woPointWiseV1(
         Number of input feature maps. By default is None (shape will be getted from tensor).
     out_f : int
         Number of output feature maps. By default is None which means out_f = 2 * in_f.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     bn_params : dict
         Parameters for BatchNormLayer. If equal to None all parameters will have default valued.
 
@@ -328,6 +358,7 @@ def ResNetConvBlock_woPointWiseV1(
     ---------
     x : MakiTensor
         Output MakiTensor.
+
     """
     if bn_params is None:
         bn_params = get_batchnorm_params
@@ -348,7 +379,8 @@ def ResNetConvBlock_woPointWiseV1(
     mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=ZERO_PADDING.format(prefix_name, 1))(x)
     mx = ConvLayer(
         kw=3, kh=3, in_f=in_f, out_f=out_f, activation=None, stride=stride,
-        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 1)
+        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 1),
+        kernel_initializer=kernel_initializer
     )(mx)
 
     mx = BatchNormLayer(D=out_f, name=BN.format(prefix_name, 2), **bn_params)(mx)
@@ -356,13 +388,15 @@ def ResNetConvBlock_woPointWiseV1(
     mx = ZeroPaddingLayer(padding=[[1,1],[1,1]], name=ZERO_PADDING.format(prefix_name, 2))(mx)
     mx = ConvLayer(
         kw=3, kh=3, in_f=out_f, out_f=out_f, activation=None,
-        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 2)
+        padding='VALID', use_bias=use_bias, name=CONV.format(prefix_name, 2),
+        kernel_initializer=kernel_initializer
     )(mx)
                                                                                 
     # Skip branch
     sx = ConvLayer(
         kw=1, kh=1, in_f=in_f, out_f=out_f, stride=stride,
-        padding='VALID', activation=None, use_bias=use_bias, name=SCIP_BRANCH.format(prefix_name)
+        padding='VALID', activation=None, use_bias=use_bias, name=SCIP_BRANCH.format(prefix_name),
+        kernel_initializer=kernel_initializer
     )(x)
                                                                                
     x = SumLayer(name=prefix_name + SUM_OPERATION + str(num_block))([mx, sx])
