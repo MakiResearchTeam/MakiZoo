@@ -27,8 +27,11 @@ import tensorflow as tf
 # --------------------------------------------------------------------------------
 
 def ResNet18(
-        input_shape, classes=1000, include_top=False,
-        create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet18 model with certain `input_shape`
 
@@ -78,8 +81,12 @@ def ResNet18(
 
 
 def ResNet34(
-        input_shape, classes=1000, include_top=False,
-        factorization_first_layer=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        factorization_first_layer=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet34 model with certain `input_shape`
 
@@ -93,6 +100,8 @@ def ResNet34(
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
         In order to build full ResNet34 model
+    factorization_first_layer : bool
+        If true at the start of CNN factorize convolution layer into 3 convolution layers.
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -131,8 +140,12 @@ def ResNet34(
 
 
 def ResNet50(
-        input_shape, classes=1000, include_top=False,
-        factorization_first_layer=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        factorization_first_layer=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet50 model with certain `input_shape`
 
@@ -146,6 +159,8 @@ def ResNet50(
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
         In order to build full ResNet50 model
+    factorization_first_layer : bool
+        If true at the start of CNN factorize convolution layer into 3 convolution layers.
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -182,8 +197,12 @@ def ResNet50(
 
 
 def ResNet101(
-        input_shape, classes=1000, include_top=False,
-        factorization_first_layer=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        factorization_first_layer=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet101 model with certain `input_shape`
 
@@ -197,6 +216,8 @@ def ResNet101(
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
         In order to build full ResNet101 model
+    factorization_first_layer : bool
+        If true at the start of CNN factorize convolution layer into 3 convolution layers.
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -233,8 +254,12 @@ def ResNet101(
 
 
 def ResNet152(
-        input_shape, classes=1000, include_top=False,
-        factorization_first_layer=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        factorization_first_layer=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet152 model with certain `input_shape`
 
@@ -248,6 +273,8 @@ def ResNet152(
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
         In order to build full ResNet152 model
+    factorization_first_layer : bool
+        If true at the start of CNN factorize convolution layer into 3 convolution layers.
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -291,8 +318,11 @@ def ResNet152(
 
 
 def Little_ResNet20(
-        input_shape, classes=1000, include_top=False,
-        create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create little ResNet20 model with certain `input_shape`
 
@@ -342,8 +372,11 @@ def Little_ResNet20(
 
 
 def Little_ResNet32(
-        input_shape, classes=1000, include_top=False,
-        create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create little ResNet32 model with certain `input_shape`
 
@@ -393,8 +426,11 @@ def Little_ResNet32(
 
 
 def Little_ResNet44(
-        input_shape, classes=1000, include_top=False,
-        create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create little ResNet44 model with certain `input_shape`
 
@@ -444,8 +480,11 @@ def Little_ResNet44(
 
 
 def Little_ResNet56(
-        input_shape, classes=1000, include_top=False,
-        create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create little ResNet56 model with certain `input_shape`
 
@@ -495,8 +534,11 @@ def Little_ResNet56(
 
 
 def Little_ResNet110(
-        input_shape, classes=1000, include_top=False,
-        create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create little ResNet110 model with certain `input_shape`
 

@@ -22,8 +22,11 @@ from .builder import build_MobileNetV2
 
 
 def MobileNetV2_1_0(
-        input_shape, classes=1000,
-        include_top=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet18 model with certain `input_shape`
 
@@ -72,8 +75,11 @@ def MobileNetV2_1_0(
 
 
 def MobileNetV2_1_4(
-        input_shape, classes=1000,
-        include_top=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet18 model with certain `input_shape`
 
@@ -122,8 +128,11 @@ def MobileNetV2_1_4(
 
 
 def MobileNetV2_0_75(
-        input_shape, classes=1000,
-        include_top=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet18 model with certain `input_shape`
 
@@ -172,8 +181,11 @@ def MobileNetV2_0_75(
 
 
 def MobileNetV2_1_3(
-        input_shape, classes=1000,
-        include_top=False, create_model=False, kernel_initializer=InitConvKernel.HE):
+        input_shape,
+        classes=1000,
+        include_top=False,
+        create_model=False,
+        kernel_initializer=InitConvKernel.HE):
     """
     Create ResNet18 model with certain `input_shape`
 
