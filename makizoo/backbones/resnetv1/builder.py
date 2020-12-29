@@ -89,12 +89,15 @@ def build_ResNetV1(
 
     Returns
     ---------
-    in_x :  mf.MakiTensor
-        Input  mf.MakiTensor.
-    output : int
-        Output mf.MakiTensor.
-    Classificator : mf.models.Classificator
-        Constructed model
+    if `create_model` is False
+        in_x : mf.MakiTensor
+            Input MakiTensor
+        output : mf.MakiTensor
+            Output MakiTensor
+    if `create_model` is True
+        model : mf.models.Classificator
+            Classification model
+
     """
 
     if (type(repetition) is not list and type(repetition) is not tuple) or len(repetition) != 4:
@@ -319,12 +322,15 @@ def build_LittleResNetV1(
 
     Returns
     ---------
-    in_x :  mf.MakiTensor
-        Input MakiTensor.
-    output : int
-        Output MakiTensor.
-    Classificator : mf.models.Classificator
-        Constructed model.
+    if `create_model` is False
+        in_x : mf.MakiTensor
+            Input MakiTensor
+        output : mf.MakiTensor
+            Output MakiTensor
+    if `create_model` is True
+        model : mf.models.Classificator
+            Classification model
+
     """
 
     feature_maps = 16

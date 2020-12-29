@@ -73,12 +73,14 @@ def build_ShuffleNetV2(
 
     Returns
     ---------
-    in_x :  mf.MakiTensor
-        Input  mf.MakiTensor.
-    output : int
-        Output mf.MakiTensor.
-    Classificator : mf.models.Classificator
-        Constructed model
+    if `create_model` is False
+        in_x : mf.MakiTensor
+            Input MakiTensor
+        output : mf.MakiTensor
+            Output MakiTensor
+    if `create_model` is True
+        model : mf.models.Classificator
+            Classification model
 
     """
     if input_tensor is None:

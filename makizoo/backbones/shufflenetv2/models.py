@@ -78,7 +78,6 @@ def ShuffleNetv2_15(
         input_shape,
         classes=1000,
         include_top=False,
-        factorization_first_layer=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """
@@ -132,7 +131,6 @@ def ShuffleNetv2_10(
         input_shape,
         classes=1000,
         include_top=False,
-        factorization_first_layer=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """
@@ -186,7 +184,6 @@ def ShuffleNetv2_05(
         input_shape,
         classes=1000,
         include_top=False,
-        factorization_first_layer=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """

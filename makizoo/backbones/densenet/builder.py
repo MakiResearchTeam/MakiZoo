@@ -95,12 +95,14 @@ def build_DenseNet(
 
     Returns
     ---------
-    in_x : MakiTensor
-        Input MakiTensor.
-    output : int
-        Output MakiTensor.
-    Classificator : makiflow.models.Classificator
-        Constructed model.
+    if `create_model` is False
+        in_x : mf.MakiTensor
+            Input MakiTensor
+        output : mf.MakiTensor
+            Output MakiTensor
+    if `create_model` is True
+        model : mf.models.Classificator
+            Classification model
 
     """
     if bn_params is None or len(bn_params) == 0:

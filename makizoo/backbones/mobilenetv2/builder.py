@@ -80,14 +80,14 @@ def build_MobileNetV2(
 
     Returns
     ---------
-    if `create_model` == false:
+    if `create_model` is False
         in_x : mf.MakiTensor
-            Input mf.MakiTensor.
-        output : int
-            Output mf.MakiTensor.
-    else:
-        Classificator : mf.models.Classificator
-        Constructed model.
+            Input MakiTensor
+        output : mf.MakiTensor
+            Output MakiTensor
+    if `create_model` is True
+        model : mf.models.Classificator
+            Classification model
 
     """
     if bn_params is None:
