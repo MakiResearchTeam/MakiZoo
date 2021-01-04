@@ -86,7 +86,7 @@ def ResNetIdentityBlockV1(
 
     """
     if bn_params is None:
-        bn_params = get_batchnorm_params
+        bn_params = get_batchnorm_params()
 
     prefix_name = PREFIX_NAME_BLOCK.format(block_id, unit_id)
 
@@ -179,7 +179,7 @@ def ResNetConvBlockV1(
 
     """
     if bn_params is None:
-        bn_params = get_batchnorm_params
+        bn_params = get_batchnorm_params()
 
     prefix_name = PREFIX_NAME_BLOCK.format(block_id, unit_id)
 
@@ -276,7 +276,7 @@ def ResNetIdentityBlock_woPointWiseV1(
 
     """
     if bn_params is None:
-        bn_params = get_batchnorm_params
+        bn_params = get_batchnorm_params()
 
     prefix_name = PREFIX_NAME_BLOCK_WOP.format(block_id, unit_id)
 
@@ -361,7 +361,7 @@ def ResNetConvBlock_woPointWiseV1(
 
     """
     if bn_params is None:
-        bn_params = get_batchnorm_params
+        bn_params = get_batchnorm_params()
 
     prefix_name = PREFIX_NAME_BLOCK_WOP.format(block_id, unit_id)
 
