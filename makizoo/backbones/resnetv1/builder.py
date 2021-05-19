@@ -46,6 +46,7 @@ def build_ResNetV1(
     min_reduction=64,
     activation_between_blocks=True,
     kernel_initializer=InitConvKernel.HE,
+    output_factorization_layer=None,
     input_tensor=None):
     """
     Build ResNet version 1 with certain parameters
@@ -84,6 +85,10 @@ def build_ResNetV1(
         Name of type initialization for conv layers,
         For more examples see: makiflow.layers.utils,
         By default He initialization are used
+    output_factorization_layer : int
+        Number of output featues from factorized layer, if equal to None,
+        If use pointwise output_factorization_layer = init_filters
+        otherwise output_factorization_layer = 2 * output_factorization_layer
     input_tensor : mf.MakiTensor
         A tensor that will be fed into the model instead of InputLayer with the specified `input_shape`.
 
@@ -112,12 +117,14 @@ def build_ResNetV1(
     if block_type == WITH_POINTWISE:
         conv_block = ResNetConvBlockV1
         iden_block = ResNetIdentityBlockV1
-        output_factorization_layer = init_filters
+        if output_factorization_layer is None:
+            output_factorization_layer = init_filters
         pointwise = True
     elif block_type == WITHOUT_POINTWISE:
         conv_block = ResNetConvBlock_woPointWiseV1
         iden_block = ResNetIdentityBlock_woPointWiseV1
-        output_factorization_layer = init_filters * 2
+        if output_factorization_layer is None:
+            output_factorization_layer = init_filters * 2
         pointwise = False
     else:
         raise Exception(f'{block_type} type is not found')
