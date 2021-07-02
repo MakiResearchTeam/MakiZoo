@@ -133,7 +133,7 @@ def build_ResNetV1(
         in_x = InputLayer(input_shape=input_shape, name='Input')
     elif input_tensor is not None:
         in_x = input_tensor
-        input_shape = input_shape.get_shape()
+        input_shape = input_tensor.get_shape()
 
     if factorization_first_layer:
 
