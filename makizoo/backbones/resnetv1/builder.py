@@ -139,7 +139,7 @@ def build_ResNetV1(
 
         x = ConvLayer(
             kw=3, kh=3, in_f=input_shape[-1], out_f=feature_maps, use_bias=use_bias,
-            activation=None, name='conv1_1/weights',
+            activation=None, stride=stride_list[0], name='conv1_1/weights',
             kernel_initializer=kernel_initializer
         )(in_x)
         x = BatchNormLayer(D=feature_maps, name='conv1_1/BatchNorm', **bn_params)(x)
@@ -155,7 +155,7 @@ def build_ResNetV1(
 
         x = ConvLayer(
             kw=3, kh=3, in_f=feature_maps, out_f=output_factorization_layer,
-            use_bias=use_bias, stride=stride_list[0], activation=None, name='conv1_3/weights',
+            use_bias=use_bias, activation=None, name='conv1_3/weights',
             kernel_initializer=kernel_initializer
         )(x)
         x = BatchNormLayer(D=output_factorization_layer, name='conv1_3/BatchNorm', **bn_params)(x)
