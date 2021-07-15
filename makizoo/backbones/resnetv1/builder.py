@@ -19,6 +19,7 @@
 from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
                      ResNetIdentityBlock_woPointWiseV1, ResNetConvBlock_woPointWiseV1)
 
+
 from .utils import (get_batchnorm_params, get_head_batchnorm_params,
                     get_batchnorm_params_resnet34, WITH_POINTWISE, WITHOUT_POINTWISE)
 
@@ -169,11 +170,13 @@ def build_ResNetV1(
         x = BatchNormLayer(D=input_shape[-1], name='bn_data', **head_bn_params)(in_x)
 
         x = ZeroPaddingLayer(padding=[[3, 3], [3, 3]], name='zero_padding2d')(x)
+        
         x = ConvLayer(
             kw=7, kh=7, in_f=input_shape[-1], out_f=feature_maps, stride=stride_list[0],
             use_bias=False, activation=None, padding='VALID',name='conv0',
             kernel_initializer=kernel_initializer
         )(x)
+        
         x = BatchNormLayer(D=feature_maps, name='bn0', **bn_params)(x)
         x = ActivationLayer(name='activation0')(x)
 
