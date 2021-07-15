@@ -15,20 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
-
 import tensorflow as tf
 from makiflow.layers.utils import InitConvKernel
-from .builder import build_MobileNetV2
+from .builder import build_ShuffleNetV2
+from .utils import MODEL_20, MODEL_15, MODEL_10, MODEL_05, SIZE_2_CONFIG_MODEL
 
 
-def MobileNetV2_1_0(
+def ShuffleNetV2_20(
         input_shape,
         classes=1000,
         include_top=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """
-    Create ResNet18 model with certain `input_shape`
+    Create ShuffleNetV2 with x2.0 model with certain `input_shape`
 
     Parameters
     ----------
@@ -39,7 +39,7 @@ def MobileNetV2_1_0(
         Number of classes for classification task, used if `include_top` is True
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
-        In order to build full ResNet18 model
+        In order to build full ShuffleNetV2 with x2.0 model
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -60,28 +60,28 @@ def MobileNetV2_1_0(
             Classification model
 
     """
-    return  build_MobileNetV2(
+    return build_ShuffleNetV2(
         input_shape=input_shape,
+        model_config=SIZE_2_CONFIG_MODEL[MODEL_20],
+        shuffle_group=2,
         include_top=include_top,
         num_classes=classes,
         use_bias=False,
-        activation=tf.nn.relu6,
+        activation=tf.nn.relu,
         create_model=create_model,
-        name_model='MobileNetV2_1_0',
-        alpha=1.0,
-        expansion=6,
-        kernel_initializer=kernel_initializer
+        kernel_initializer=kernel_initializer,
+        name_model='ShuffleNetv2_20'
     )
 
 
-def MobileNetV2_1_4(
+def ShuffleNetv2_15(
         input_shape,
         classes=1000,
         include_top=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """
-    Create ResNet18 model with certain `input_shape`
+    Create ShuffleNetV2 with x1.5 model with certain `input_shape`
 
     Parameters
     ----------
@@ -92,7 +92,7 @@ def MobileNetV2_1_4(
         Number of classes for classification task, used if `include_top` is True
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
-        In order to build full ResNet18 model
+        In order to build full ShuffleNetV2 with x1.5 model
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -113,28 +113,28 @@ def MobileNetV2_1_4(
             Classification model
 
     """
-    return  build_MobileNetV2(
+    return build_ShuffleNetV2(
         input_shape=input_shape,
+        model_config=SIZE_2_CONFIG_MODEL[MODEL_15],
+        shuffle_group=2,
         include_top=include_top,
         num_classes=classes,
         use_bias=False,
-        activation=tf.nn.relu6,
+        activation=tf.nn.relu,
         create_model=create_model,
-        name_model='MobileNetV2_1_4',
-        alpha=1.4,
-        expansion=6,
-        kernel_initializer=kernel_initializer
+        kernel_initializer=kernel_initializer,
+        name_model='ShuffleNetv2_20'
     )
 
 
-def MobileNetV2_0_75(
+def ShuffleNetv2_10(
         input_shape,
         classes=1000,
         include_top=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """
-    Create ResNet18 model with certain `input_shape`
+    Create ShuffleNetV2 with x1.0 model with certain `input_shape`
 
     Parameters
     ----------
@@ -145,7 +145,7 @@ def MobileNetV2_0_75(
         Number of classes for classification task, used if `include_top` is True
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
-        In order to build full ResNet18 model
+        In order to build full ShuffleNetV2 with x1.0 model
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -166,28 +166,28 @@ def MobileNetV2_0_75(
             Classification model
 
     """
-    return  build_MobileNetV2(
+    return build_ShuffleNetV2(
         input_shape=input_shape,
+        model_config=SIZE_2_CONFIG_MODEL[MODEL_10],
+        shuffle_group=2,
         include_top=include_top,
         num_classes=classes,
         use_bias=False,
-        activation=tf.nn.relu6,
+        activation=tf.nn.relu,
         create_model=create_model,
-        name_model='MobileNetV2_0_75',
-        alpha=0.75,
-        expansion=6,
-        kernel_initializer=kernel_initializer
+        kernel_initializer=kernel_initializer,
+        name_model='ShuffleNetv2_20'
     )
 
 
-def MobileNetV2_1_3(
+def ShuffleNetv2_05(
         input_shape,
         classes=1000,
         include_top=False,
         create_model=False,
         kernel_initializer=InitConvKernel.HE):
     """
-    Create ResNet18 model with certain `input_shape`
+    Create ShuffleNetV2 with x0.5 model with certain `input_shape`
 
     Parameters
     ----------
@@ -198,7 +198,7 @@ def MobileNetV2_1_3(
         Number of classes for classification task, used if `include_top` is True
     include_top : bool
         If equal to True then additional dense layers will be added to the model,
-        In order to build full ResNet18 model
+        In order to build full ShuffleNetV2 with x0.5 model
     create_model : bool
         If equal to True then will be created Classification model
         and this method wil return only this obj
@@ -219,15 +219,15 @@ def MobileNetV2_1_3(
             Classification model
 
     """
-    return  build_MobileNetV2(
+    return build_ShuffleNetV2(
         input_shape=input_shape,
+        model_config=SIZE_2_CONFIG_MODEL[MODEL_05],
+        shuffle_group=2,
         include_top=include_top,
         num_classes=classes,
         use_bias=False,
-        activation=tf.nn.relu6,
+        activation=tf.nn.relu,
         create_model=create_model,
-        name_model='MobileNetV2_1_3',
-        alpha=1.3,
-        expansion=6,
-        kernel_initializer=kernel_initializer
+        kernel_initializer=kernel_initializer,
+        name_model='ShuffleNetv2_20'
     )

@@ -19,7 +19,7 @@
 # This function taken from original git of MobileNetV2
 # Main idea of these function - make numbers (`v` in function)
 # divisible by other number (`divisor` in function) without remainder
-def make_divisible(v, divisor, min_value=None):
+def make_divisible(v, divisor=8, min_value=None):
     if min_value is None:
         min_value = divisor
     new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)

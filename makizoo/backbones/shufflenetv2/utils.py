@@ -15,14 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
+MODEL_05 = '0.5'
+MODEL_10 = '1.0'
+MODEL_15 = '1.5'
+MODEL_20 = '2.0'
 
-from .models import (ResNet18, ResNet34, ResNet50,
-                     ResNet101, ResNet152, Little_ResNet20,
-                     Little_ResNet32, Little_ResNet44,
-                     Little_ResNet56, Little_ResNet110)
 
-from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
-                     ResNetConvBlock_woPointWiseV1, ResNetIdentityBlock_woPointWiseV1)
-
-from .builder import build_ResNetV1, build_LittleResNetV1
-from .utils import get_batchnorm_params
+SIZE_2_CONFIG_MODEL = {
+    MODEL_05: [(48, 4), (96, 8), (192, 4), 1024],
+    MODEL_10: [(116, 4), (232, 8), (464, 4), 1024],
+    MODEL_15: [(176, 4), (352, 8), (704, 4), 1024],
+    MODEL_20: [(244, 4), (488, 8), (976, 4), 2048],
+}
