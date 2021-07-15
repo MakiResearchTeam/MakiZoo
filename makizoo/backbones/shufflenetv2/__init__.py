@@ -15,14 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
-
-from .models import (ResNet18, ResNet34, ResNet50,
-                     ResNet101, ResNet152, Little_ResNet20,
-                     Little_ResNet32, Little_ResNet44,
-                     Little_ResNet56, Little_ResNet110)
-
-from .blocks import (ResNetIdentityBlockV1, ResNetConvBlockV1,
-                     ResNetConvBlock_woPointWiseV1, ResNetIdentityBlock_woPointWiseV1)
-
-from .builder import build_ResNetV1, build_LittleResNetV1
-from .utils import get_batchnorm_params
+from .models import ShuffleNetv2_10, ShuffleNetv2_15, ShuffleNetv2_05, ShuffleNetV2_20
+from .blocks import ShuffleNetSpatialDownUnit, ShuffleNetBasicUnitBlock
+from .builder import build_ShuffleNetV2

@@ -15,25 +15,45 @@
 # You should have received a copy of the GNU General Public License
 # along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import numpy as np
 import tensorflow as tf
 from .utils import make_divisible
-
 from makiflow.layers import *
+from makiflow.layers.utils import InitConvKernel
 
-def inverted_res_block(
+
+NAME_EXPANDED_CONV = "expanded_conv"
+ZERO_EXPANDED_CONV = NAME_EXPANDED_CONV + "/"
+PREFIX = NAME_EXPANDED_CONV + "_{}/"
+
+# Expand names
+NAME_EXPAND = "{}expand/weights"
+NAME_EXPAND_BN = "{}expand/BatchNorm"
+NAME_EXPAND_ACT = "{}expand_relu"
+
+# Depthwise names
+NAME_DEPTHWISE = "{}depthwise/depthwise_weights"
+NAME_DEPTHWISE_BN = "{}depthwise/BatchNorm"
+NAME_DEPTHWISE_ACT = "{}depthsiwe_relu"
+
+# Pointwise names
+NAME_POINTWISE = "{}project/weights"
+NAME_POINTWISE_BN = "{}project/BatchNorm"
+NAME_FINAL_ADD = "{}add"
+
+
+def MobileNetV2InvertedResBlock(
         x,
-        expansion,
-        alpha,
-        block_id,
+        expansion: int,
+        alpha: float,
+        block_id: int,
         out_f=None,
         in_f=None,
         stride=1,
         use_skip_connection=True,
-        use_expand=False,
+        use_expand=True,
         activation=tf.nn.relu6,
         use_bias=False,
+        kernel_initializer=InitConvKernel.HE,
         bn_params={}):
     """
     Parameters
@@ -42,7 +62,7 @@ def inverted_res_block(
         Input MakiTensor.
     expansion : int
         Magnification multiplier of feature maps.
-    alpha : int
+    alpha : float
         Controls the width of the network. This is known as the width multiplier in the MobileNetV2 paper.
         If alpha < 1.0, proportionally decreases the number of filters.
         If alpha > 1.0, proportionally increases the number of filters.
@@ -53,6 +73,8 @@ def inverted_res_block(
         Number of input feature maps. By default None (shape will be getted from tensor).
     out_f : int
         Number of output feature maps. By default None (shape will same as `in_f`).
+    stride : int
+        Stride for convolution (used in depthwise convolution)
     activation : tensorflow function
         The function of activation, by default tf.nn.relu6.
     use_bias : bool
@@ -61,6 +83,10 @@ def inverted_res_block(
         If true, sum input and output (if they are equal).
     use_expand : bool
         If true, input feature maps `in_f` will be expand to `expansion` * `in_f`.
+    kernel_initializer : str
+        Name of type initialization for conv layers,
+        For more examples see: makiflow.layers.utils,
+        By default He initialization are used
     bn_params : dict
         Parameters for BatchNormLayer. If empty all parameters will have default valued.
 
@@ -68,74 +94,76 @@ def inverted_res_block(
     ---------
     x : MakiTensor
         Output MakiTensor
-    pointwise_f : int
-        Output number of feature maps
+
     """
+    # Save for sum Operation
     inputs = x
 
     if in_f is None:
         in_f = x.get_shape()[-1]
 
-    pointwise_conv_filters = int(out_f*alpha)
-    pointwise_f = make_divisible(pointwise_conv_filters, 8)
+    # Calculate output number of f. for last ConvLayer, this number should be divisible by 8
+    pointwise_f = make_divisible(int(out_f*alpha))
 
-    prefix = f'expanded_conv_{block_id}/'
+    prefix = PREFIX.format(str(block_id))
 
+    # Standart cheme: expand -> depthwise -> pointwise
     if use_expand:
-        # Expand
-        exp_f = expansion * in_f
-
-        x = ConvLayer(kw=1,
-                    kh=1,
-                    in_f=in_f,
-                    out_f=exp_f,
-                    name=prefix + 'expand/weights',
-                    stride=1,
-                    use_bias=use_bias,
-                    padding='SAME',
-                    activation=None,
+        # Expand stage, expand input f according to `expansion` value
+        x = ConvLayer(
+            kw=1,
+            kh=1,
+            in_f=in_f,
+            out_f=int(expansion * in_f),
+            name=NAME_EXPAND.format(prefix),
+            use_bias=use_bias,
+            activation=None,
+            kernel_initializer=kernel_initializer
         )(x)
 
-        x = BatchNormLayer(D=exp_f, name=prefix+'expand/BatchNorm', **bn_params)(x)
+        x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_EXPAND_BN.format(prefix), **bn_params)(x)
 
-        x = ActivationLayer(activation=activation, name=prefix+'expand_relu')(x)
+        x = ActivationLayer(activation=activation, name=NAME_EXPAND_ACT.format(prefix))(x)
     else:
-        prefix = 'expanded_conv/'
-        exp_f = in_f
+        # Expand layer is not used in first block
+        # TODO: Add unique name for this layer, if we build some custom stuff
+        prefix = ZERO_EXPANDED_CONV
 
-    # Depthwise
-
-    x = DepthWiseConvLayer(kw=3,
-                        kh=3,
-                        in_f=exp_f,
-                        multiplier = 1,
-                        activation=None,
-                        stride=stride,
-                        padding='SAME',
-                        use_bias=use_bias,
-                        name=prefix + 'depthwise/depthwise_weights',
+    # Depthwise stage
+    x = DepthWiseConvLayer(
+        kw=3,
+        kh=3,
+        in_f=x.get_shape()[-1],
+        multiplier = 1,
+        activation=None,
+        stride=stride,
+        use_bias=use_bias,
+        name=NAME_DEPTHWISE.format(prefix),
+        kernel_initializer=kernel_initializer
     )(x)
 
-    x = BatchNormLayer(D=exp_f, name=prefix+'depthwise/BatchNorm', **bn_params)(x)
+    x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_DEPTHWISE_BN.format(prefix), **bn_params)(x)
+    x = ActivationLayer(activation=activation, name=NAME_DEPTHWISE_ACT.format(prefix))(x)
 
-    x = ActivationLayer(activation=activation, name=prefix+'depthsiwe_relu')(x)
-
-    # Project
-    x = ConvLayer(kw=1,
-                kh=1,
-                in_f=exp_f,
-                out_f=pointwise_f,
-                stride=1,
-                padding='SAME',
-                use_bias=use_bias,
-                activation=None,
-                name=prefix+'project/weights'
+    # Pointwise (Project) to certain size (input number of the f)
+    x = ConvLayer(
+        kw=1,
+        kh=1,
+        in_f=x.get_shape()[-1],
+        out_f=pointwise_f,
+        use_bias=use_bias,
+        activation=None,
+        name=NAME_POINTWISE.format(prefix),
+        kernel_initializer=kernel_initializer
     )(x)
 
-    x = BatchNormLayer(D=pointwise_f, name=prefix+'project/BatchNorm', **bn_params)(x)
+    x = BatchNormLayer(D=x.get_shape()[-1], name=NAME_POINTWISE_BN.format(prefix), **bn_params)(x)
 
     if use_skip_connection:
-        return SumLayer(name=prefix+'add')([inputs,x])
+        if x.get_shape()[-1] != inputs.get_shape()[-1]:
+            raise ValueError(f'Error SumLayer\nIn block {block_id} input and output f. have different size')
+
+        return SumLayer(name=NAME_FINAL_ADD.format(prefix))([inputs, x])
     else:
         return x
 
